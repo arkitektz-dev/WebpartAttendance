@@ -1,0 +1,19 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "arkitektz-attendance-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/arkitektzAttendance/ArkitektzAttendanceWebPart.js",
+          "manifest": "./src/webparts/arkitektzAttendance/ArkitektzAttendanceWebPart.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+    "ArkitektzAttendanceWebPartStrings": "lib/webparts/arkitektzAttendance/loc/{locale}.js",
+    "ControlStrings": "node_modules/@pnp/spfx-controls-react/lib/loc/{locale}.js"
+  }
+}
