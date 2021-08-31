@@ -35,6 +35,9 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
     buttonText,
   } = props;
 
+  console.log(props);
+  
+
   const listService = new ListService(context);
   const userService = new UserService(context);
 

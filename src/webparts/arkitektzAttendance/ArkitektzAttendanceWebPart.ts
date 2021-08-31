@@ -73,6 +73,8 @@ export interface IArkitektzAttendanceWebPartProps {
 }
 
 export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IArkitektzAttendanceWebPartProps> {
+  private _webpartConfiguration: IWebpartConfiguration = null;
+
   protected async onInit(): Promise<void> {
     const fileService = new FileService(this.context);
     const listService = new ListService(this.context);
@@ -104,10 +106,8 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
       const file: IWebpartConfiguration = await fileService.readFile(
         ConfigurationFileInfo.fullPath
       );
-      this.properties.webpartConfiguration = file;
+      this._webpartConfiguration = file;
     }
-
-    listService.getUserListItems(this.properties.webpartConfiguration);
 
     this.initializeProperties();
 
@@ -153,7 +153,7 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
 
     //appearance
     this.properties.buttonAppearance =
-      this.properties.buttonAppearance || ButtonAppearanceOptions.NoOutline;
+      this.properties.buttonAppearance || ButtonAppearanceOptions.FillColor;
 
     this.properties.buttonAlignment =
       this.properties.buttonAlignment || ButtonAlignmentOptions.Center;
@@ -303,16 +303,16 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
         this.properties.usersListOfficeLongitudeColumn;
     } else {
       obj.usersListSiteURL =
-        this.properties.webpartConfiguration.usersListSiteURL;
-      obj.usersListName = this.properties.webpartConfiguration.usersListName;
+        this._webpartConfiguration.usersListSiteURL;
+      obj.usersListName = this._webpartConfiguration.usersListName;
       obj.usersListTitleColumn =
-        this.properties.webpartConfiguration.usersListTitleColumn;
+        this._webpartConfiguration.usersListTitleColumn;
       obj.usersListOfficeLocationCoordinatesColumn =
-        this.properties.webpartConfiguration.usersListOfficeLocationCoordinatesColumn;
+        this._webpartConfiguration.usersListOfficeLocationCoordinatesColumn;
       obj.usersListOfficeLatitudeColumn =
-        this.properties.webpartConfiguration.usersListOfficeLatitudeColumn;
+        this._webpartConfiguration.usersListOfficeLatitudeColumn;
       obj.usersListOfficeLongitudeColumn =
-        this.properties.webpartConfiguration.usersListOfficeLongitudeColumn;
+        this._webpartConfiguration.usersListOfficeLongitudeColumn;
     }
 
     if (
@@ -329,23 +329,23 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
         this.properties.attendanceListTimeoutColumn;
     } else {
       obj.attendanceListSiteURL =
-        this.properties.webpartConfiguration.attendanceListSiteURL;
+        this._webpartConfiguration.attendanceListSiteURL;
       obj.attendanceListName =
-        this.properties.webpartConfiguration.attendanceListName;
+        this._webpartConfiguration.attendanceListName;
       obj.attendanceListUserColumn =
-        this.properties.webpartConfiguration.attendanceListUserColumn;
+        this._webpartConfiguration.attendanceListUserColumn;
       obj.attendanceListTimeinColumn =
-        this.properties.webpartConfiguration.attendanceListTimeinColumn;
+        this._webpartConfiguration.attendanceListTimeinColumn;
       obj.attendanceListTimeoutColumn =
-        this.properties.webpartConfiguration.attendanceListTimeoutColumn;
+        this._webpartConfiguration.attendanceListTimeoutColumn;
     }
 
     obj.attendanceListLocationCoordinatesColumn =
-      this.properties.webpartConfiguration.attendanceListLocationCoordinatesColumn;
+      this._webpartConfiguration.attendanceListLocationCoordinatesColumn;
     obj.attendanceListLocationLabelColumn =
-      this.properties.webpartConfiguration.attendanceListLocationLabelColumn;
-    obj.noLocationLabel = this.properties.webpartConfiguration.noLocationLabel;
-    obj.noOfficeLabel = this.properties.webpartConfiguration.noOfficeLabel;
+      this._webpartConfiguration.attendanceListLocationLabelColumn;
+    obj.noLocationLabel = this._webpartConfiguration.noLocationLabel;
+    obj.noOfficeLabel = this._webpartConfiguration.noOfficeLabel;
 
     return obj;
   }
