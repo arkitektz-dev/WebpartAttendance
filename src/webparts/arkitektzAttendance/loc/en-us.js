@@ -3,7 +3,7 @@ define([], function () {
     PropertyPane: {
       SettingsGroup: {
         GroupName: "Settings",
-        ShowDesription: "Show Description",
+        ShowDesriptionFieldLabel: "Show Description",
         DescriptionFieldLabel: "Desription",
       },
       ConfigurationGroup: {
@@ -13,6 +13,12 @@ define([], function () {
           Recommended: "Recommended",
           Custom: "Custom",
         },
+        UseGeoLocationFieldLabel: "Use Location",
+        RadiusFieldLabel: "Radius",
+        SiteFieldLabel: "Select Site",
+        ListFieldLabel: "Select List",
+        UserColumnFieldLabel: "User Column",
+        OfficeLocationCoordinatesColumnFieldLabel: "Office Location",
       },
       AppearanceGroup: {
         GroupName: "Appearance",
@@ -25,6 +31,12 @@ define([], function () {
             FillColor: "Fill Color",
           },
           BorderRadiusFieldLabel: "Border Radius",
+          AlignmentFieldLabel: "Button alignment",
+          AlignmentOptions: {
+            Left: "Left",
+            Center: "Center",
+            Right: "Right"
+          },
           IconPlacementFieldLabel: "Icon Placement",
           IconPlacementOptions: {
             NoIcon: "Text Only",
@@ -32,15 +44,22 @@ define([], function () {
             IconOnRight: "Icon on Right",
             IconOnLeft: "Icon on Left",
           },
+          IconPickerFieldLabel: "Select Icon",
+          IconPickerFieldButtonLabel: "Icon",
         },
       },
-      AttendanceListGroup: {
-        GroupName: "Attendance List",
+      AttendanceSourceGroup: {
+        GroupName: "Attendance Source",
         ConfigurationType: "Configuration Type",
         ConfigurationTypeOptions: {
           Recommended: "Recommended",
           Custom: "Custom",
         },
+        SiteFieldLabel: "Select Site",
+        ListFieldLabel: "Select List",
+        UserColumnFieldLabel: "User Column",
+        TimeinColumnFieldLabel: "Timein Column",
+        TimeoutColumnFieldLabel: "Timeout Column",
       },
     },
   };

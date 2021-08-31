@@ -2,7 +2,7 @@ declare interface IArkitektzAttendanceWebPartStrings {
   PropertyPane: {
     SettingsGroup: {
       GroupName: string;
-      ShowDesription: string;
+      ShowDesriptionFieldLabel: string;
       DescriptionFieldLabel: string;
     };
     ConfigurationGroup: {
@@ -12,6 +12,12 @@ declare interface IArkitektzAttendanceWebPartStrings {
         Recommended: string;
         Custom: string;
       };
+      UseGeoLocationFieldLabel: string;
+      RadiusFieldLabel: string;
+      SiteFieldLabel: string;
+      ListFieldLabel: string;
+      UserColumnFieldLabel: string;
+      OfficeLocationCoordinatesColumnFieldLabel: string;
     };
     AppearanceGroup: {
       GroupName: string;
@@ -24,6 +30,12 @@ declare interface IArkitektzAttendanceWebPartStrings {
           FillColor: string;
         };
         BorderRadiusFieldLabel: string;
+        AlignmentFieldLabel: string;
+        AlignmentOptions: {
+          Left: string;
+          Center: string;
+          Right: string;
+        };
         IconPlacementFieldLabel: string;
         IconPlacementOptions: {
           NoIcon: string;
@@ -31,15 +43,22 @@ declare interface IArkitektzAttendanceWebPartStrings {
           IconOnRight: string;
           IconOnLeft: string;
         };
+        IconPickerFieldLabel: string;
+        IconPickerFieldButtonLabel: string;
       };
     };
-    AttendanceListGroup: {
+    AttendanceSourceGroup: {
       GroupName: string;
       ConfigurationType: string;
       ConfigurationTypeOptions: {
         Recommended: string;
         Custom: string;
       };
+      SiteFieldLabel: string;
+      ListFieldLabel: string;
+      UserColumnFieldLabel: string;
+      TimeinColumnFieldLabel: string;
+      TimeoutColumnFieldLabel: string;
     };
   };
 }

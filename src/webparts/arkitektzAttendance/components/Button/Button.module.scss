@@ -1,0 +1,71 @@
+@import "~office-ui-fabric-react/dist/sass/References.scss";
+
+.buttonContainer {
+  button {
+    outline: transparent;
+    position: relative;
+    font-family: "Segoe UI", "Segoe UI Web (West European)", "Segoe UI",
+      -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    font-size: 14px;
+    font-weight: 400;
+    box-sizing: border-box;
+    display: inline-block;
+    text-decoration: none;
+    text-align: center;
+    cursor: default;
+    padding: 0.2rem 1rem;
+    min-width: 80px;
+    background-color: rgb(243, 242, 241);
+    max-width: 100%;
+    user-select: none;
+  }
+
+  .outline {
+    border: 1px solid;
+    border-color: "[theme: themePrimary, default: #0078d7]";
+  }
+
+  .fillColor {
+    border: none;
+    background-color: "[theme: themePrimary, default: #0078d7]";
+  }
+
+  .noOutline {
+    border: none;
+  }
+
+  .timeinLabel {
+    margin-right: 5px;
+  }
+
+  .label {
+    margin: 0px;
+    line-height: 2rem;
+    display: block;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    color: "[theme: neutralLight, default: #0078d7]";
+  }
+
+  .textContainer {
+    flex-grow: 1;
+    display: block;
+    max-width: 100%;
+  }
+
+  .flexContainer {
+    display: block;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .buttonIcon {
+    vertical-align: top;
+    margin: 0px 0.2rem;
+  }
+}

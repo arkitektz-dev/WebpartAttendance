@@ -18,7 +18,7 @@
     {
       "groupId": "5c03119e-3074-46fd-976b-c60198311f70", // Other
       "group": { "default": "Other" },
-      "title": { "default": "ArkitektzAttendance" },
+      "title": { "default": "Arkitektz Attendance" },
       "description": {
         "default": "This webpart will mark attendance of a user and save it in a list."
       },
@@ -30,7 +30,11 @@
 
         // Appearance
         "buttonText": "Checkin, Checkout",
-        "buttonBorderRadius": "10"
+        "buttonBorderRadius": "10",
+
+        //Configuration
+        "useGeoLocation": false,
+        "radius":0
       }
     }
   ]
