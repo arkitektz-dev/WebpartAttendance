@@ -28,7 +28,13 @@ export class FileService {
         return res.Exists;
       })
       .catch((error) => {
-        // console.log(error);
+        console.log(
+          "'Method Name': List Service --> checkFolderExist",
+          "\n'Message':",
+          error.message,
+          "\n'Error':",
+          error
+        );
         return false;
       });
 
@@ -46,7 +52,13 @@ export class FileService {
         return true;
       })
       .catch((error) => {
-        // console.log(error);
+        console.log(
+          "'Method Name': List Service --> addFolder",
+          "\n'Message':",
+          error.message,
+          "\n'Error':",
+          error
+        );
         return false;
       });
 
@@ -69,7 +81,13 @@ export class FileService {
         return res;
       })
       .catch((error) => {
-        // console.log(error);
+        console.log(
+          "'Method Name': List Service --> readFile",
+          "\n'Message':",
+          error.message,
+          "\n'Error':",
+          error
+        );
         return false;
       });
 
@@ -92,7 +110,13 @@ export class FileService {
         return true;
       })
       .catch((error) => {
-        // console.log(error);
+        console.log(
+          "'Method Name': List Service --> addFile",
+          "\n'Message':",
+          error.message,
+          "\n'Error':",
+          error
+        );
         return false;
       });
 
@@ -116,7 +140,13 @@ export class FileService {
         return true;
       })
       .catch((error) => {
-        // console.log(error);
+        console.log(
+          "'Method Name': List Service --> checkFileExist",
+          "\n'Message':",
+          error.message,
+          "\n'Error':",
+          error
+        );
         return false;
       });
 

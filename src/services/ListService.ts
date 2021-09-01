@@ -175,22 +175,31 @@ export class ListService {
         console.log(res);
         if (res.length === 0) return null;
         let user = {} as IUser;
-        const officeLocationCoordinates =
-          res[0][usersListOfficeLocationCoordinatesColumn].split(",");
-
         user = {
           email: res[0][usersListTitleColumn]["EMail"],
-          officeLocationCoordinates: {
-            latitude: officeLocationCoordinates[0],
-            longitude: officeLocationCoordinates[1],
-          },
         };
+
+        if (res[0][usersListOfficeLocationCoordinatesColumn]) {
+          const officeLocationCoordinates =
+            res[0][usersListOfficeLocationCoordinatesColumn].split(",");
+
+          if (officeLocationCoordinates.length === 2) {
+            user.officeLocationCoordinates = {
+              latitude: officeLocationCoordinates[0],
+              longitude: officeLocationCoordinates[1],
+            };
+          } else {
+            user.officeLocationCoordinates = null;
+          }
+        } else {
+          user.officeLocationCoordinates = null;
+        }
 
         return user;
       })
       .catch((error) => {
         console.log(
-          "'Method Name': List Service->getUserListItems",
+          "'Method Name': List Service --> getUserListItems",
           "\n'Message':",
           error.message,
           "\n'Error':",
@@ -250,7 +259,7 @@ export class ListService {
       })
       .catch((error) => {
         console.log(
-          "'Method Name': List Service->saveListItem",
+          "'Method Name': List Service --> saveListItem",
           "\n'Message':",
           error.message,
           "\n'Error':",
@@ -291,7 +300,7 @@ export class ListService {
       })
       .catch((error) => {
         console.log(
-          "'Method Name': List Service->updateListItem",
+          "'Method Name': List Service --> updateListItem",
           "\n'Message':",
           error.message,
           "\n'Error':",
@@ -305,48 +314,3 @@ export class ListService {
 }
 
 export default ListService;
-
-// public async getListColumns(
-//   siteURL: string,
-//   listName: string
-// ): Promise<IListColumn[]> {
-//   let listColumns: IListColumn[] = [];
-//   const web = Web(siteURL);
-//   const list = web.lists.getByTitle(listName);
-//   let viewType = "All Items";
-
-//   try {
-//     const listType = await list.select("BaseTemplate")();
-//     if (listType.BaseTemplate === 106) {
-//       viewType = "All Events";
-//     }
-
-//     const fields: IViewFields = await list.views
-//       .getByTitle(viewType)
-//       .fields();
-
-//     let internames: string[] = (fields as any).Items;
-//     let filterstring: string = internames
-//       .map((x) => `(InternalName eq '${x}')`)
-//       .join(` or `);
-
-//     const result = await list.fields
-//       .filter(filterstring)
-//       .select("InternalName", "Title")
-//       .get();
-
-//     listColumns = result.map((item) => {
-//       const listColumn: IListColumn = {} as IListColumn;
-
-//       listColumn.title = item.Title;
-//       listColumn.internalName = item.InternalName;
-//       listColumn.type = item["odata.type"];
-
-//       return listColumn;
-//     });
-//   } catch (error) {
-//     console.log(error);
-//   }
-
-//   return listColumns;
-// }

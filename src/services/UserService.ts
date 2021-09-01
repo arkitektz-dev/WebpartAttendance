@@ -25,7 +25,13 @@ export class UserService {
         return res;
       })
       .catch((error) => {
-        // console.log(error);
+        console.log(
+          "'Method Name': List Service --> getCurrentUserByEmail",
+          "\n'Message':",
+          error.message,
+          "\n'Error':",
+          error
+        );
         return false;
       });
 
