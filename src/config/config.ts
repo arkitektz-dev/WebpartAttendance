@@ -27,16 +27,3 @@ export const WebpartConfiguration = {
   noLocationLabel: "no location service enabled",
   noOfficeLabel: "no office assigned to this user.",
 };
-
-// configurationSite: "https://convotechsoftwares.sharepoint.com/sites/com",
-// attendanceStorageSite: "https://convotechsoftwares.sharepoint.com/sites/com",
-// configurationList: "Employees",
-// attendanceStorageList: "Attendance",
-// attendanceStorageEmployeeColumn: "EmployeeName",
-// attendanceStorageCheckinColumn: "CheckinTime",
-// attendanceStorageCheckoutColumn: "CheckoutTime",
-// listname: "Employees",
-// employeeInfoColumn: "Employee_x0020_Name",
-// officeInfoColumn: "Office",
-// noLocationLabel: "no location service enabled",
-// noOfficeLabel: "No Office assigned to this user.",
