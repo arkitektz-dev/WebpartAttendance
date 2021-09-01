@@ -1,4 +1,6 @@
 import { WebPartContext } from "@microsoft/sp-webpart-base";
+import { IReadonlyTheme } from "@microsoft/sp-component-base";
+
 import { ConfigurationTypeOptions } from "../../../models/Options";
 import { IWebpartConfiguration } from "./../../../models/IWebpartConfiguration";
 
@@ -13,7 +15,7 @@ export interface IArkitektzAttendanceProps {
   // configuration
   useGeoLocation: boolean;
   radius: number;
-  
+
   //appearance
   buttonText: string;
   buttonAppearance: string;
@@ -24,4 +26,7 @@ export interface IArkitektzAttendanceProps {
 
   // attendance source
   attendanceListSourceConfigurationType: ConfigurationTypeOptions;
+
+  //theme
+  themeVariant: IReadonlyTheme | undefined;
 }

@@ -3,5 +3,8 @@
 .textContainer {
   p {
     margin: 0px;
+    color: "[theme: bodyText, default: #000]";
+    font-size: "[theme: mediumFontSize, default: 14px]";
+    font-family: "[theme:  mediumFontFamily, default: sans-serif]";
   }
 }

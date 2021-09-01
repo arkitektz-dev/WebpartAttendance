@@ -4,11 +4,9 @@
   button {
     outline: transparent;
     position: relative;
-    font-family: "Segoe UI", "Segoe UI Web (West European)", "Segoe UI",
-      -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
-    -webkit-font-smoothing: antialiased;
-    font-size: 14px;
-    font-weight: 400;
+    font-size: "[theme: mediumFontSize, default: 14px]";
+    font-family: "[theme:  mediumFontFamily, default: sans-serif]";
+    font-weight: "[theme:  mediumFontWeight, default: 400]";
     box-sizing: border-box;
     display: inline-block;
     text-decoration: none;
@@ -24,19 +22,23 @@
   .outline {
     border: 1px solid;
     border-color: "[theme: themePrimary, default: #0078d7]";
+    color: "[theme: bodyText, default: #0078d7]";
   }
 
   .fillColor {
     border: none;
-    background-color: "[theme: themePrimary, default: #0078d7]";
+    background-color: "[theme: primaryButtonBackground, default: #0078d7]";
+    color: "[theme: primaryButtonText, default: #0078d7]";
   }
 
   .noOutline {
     border: none;
+    color: "[theme: bodyText, default: #0078d7]";
   }
 
   .timeinLabel {
     margin-right: 5px;
+    color: "[theme: bodyText, default: #0078d7]";
   }
 
   .label {

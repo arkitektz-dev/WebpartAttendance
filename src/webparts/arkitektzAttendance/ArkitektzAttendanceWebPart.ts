@@ -3,6 +3,11 @@ import * as ReactDom from "react-dom";
 import { Version } from "@microsoft/sp-core-library";
 import { BaseClientSideWebPart } from "@microsoft/sp-webpart-base";
 import {
+  ThemeProvider,
+  ThemeChangedEventArgs,
+  IReadonlyTheme,
+} from "@microsoft/sp-component-base";
+import {
   IPropertyPaneField,
   PropertyPaneSlider,
   PropertyPaneToggle,
@@ -17,6 +22,7 @@ import {
   IPropertyFieldSite,
 } from "@pnp/spfx-property-controls/lib/PropertyFieldSitePicker";
 import { PropertyFieldNumber } from "@pnp/spfx-property-controls/lib/PropertyFieldNumber";
+
 import { PropertyPaneAsyncDropdown } from "../../controls/PropertyPaneAsyncDropdown/PropertyPaneAsyncDropdown";
 import * as webPartStrings from "ArkitektzAttendanceWebPartStrings";
 import ArkitektzAttendance from "./components/ArkitektzAttendance";
@@ -73,11 +79,21 @@ export interface IArkitektzAttendanceWebPartProps {
 }
 
 export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IArkitektzAttendanceWebPartProps> {
+  private _themeProvider: ThemeProvider;
+  private _themeVariant: IReadonlyTheme | undefined;
   private _webpartConfiguration: IWebpartConfiguration = null;
 
   protected async onInit(): Promise<void> {
+    this._themeProvider = this.context.serviceScope.consume(
+      ThemeProvider.serviceKey
+    );
+    this._themeVariant = this._themeProvider.tryGetTheme();
+    this._themeProvider.themeChangedEvent.add(
+      this,
+      this._handleThemeChangedEvent
+    );
+
     const fileService = new FileService(this.context);
-    const listService = new ListService(this.context);
 
     const isFolderExist = await fileService.checkFolderExist(
       ConfigurationFileInfo.fullPath
@@ -135,6 +151,8 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
         //attendance source
         attendanceListSourceConfigurationType:
           this.properties.attendanceListSourceConfigurationType,
+        //theme
+        themeVariant: this._themeVariant,
       });
 
     ReactDom.render(element, this.domElement);
@@ -302,8 +320,7 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
       obj.usersListOfficeLongitudeColumn =
         this.properties.usersListOfficeLongitudeColumn;
     } else {
-      obj.usersListSiteURL =
-        this._webpartConfiguration.usersListSiteURL;
+      obj.usersListSiteURL = this._webpartConfiguration.usersListSiteURL;
       obj.usersListName = this._webpartConfiguration.usersListName;
       obj.usersListTitleColumn =
         this._webpartConfiguration.usersListTitleColumn;
@@ -330,8 +347,7 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
     } else {
       obj.attendanceListSiteURL =
         this._webpartConfiguration.attendanceListSiteURL;
-      obj.attendanceListName =
-        this._webpartConfiguration.attendanceListName;
+      obj.attendanceListName = this._webpartConfiguration.attendanceListName;
       obj.attendanceListUserColumn =
         this._webpartConfiguration.attendanceListUserColumn;
       obj.attendanceListTimeinColumn =
@@ -730,5 +746,10 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
     }
 
     return attendanceSourceFields;
+  }
+
+  private _handleThemeChangedEvent(args: ThemeChangedEventArgs): void {
+    this._themeVariant = args.theme;
+    this.render();
   }
 }

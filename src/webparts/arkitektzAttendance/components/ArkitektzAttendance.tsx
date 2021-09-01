@@ -36,7 +36,6 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
   } = props;
 
   console.log(props);
-  
 
   const listService = new ListService(context);
   const userService = new UserService(context);
@@ -161,7 +160,12 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
   return (
     <div className={styles.arkitektzAttendance}>
       <div className={styles.container}>
-        <div className={styles.row}>
+        <div
+          className={styles.row}
+          style={{
+            backgroundColor: props.themeVariant.semanticColors.bodyBackground,
+          }}
+        >
           {showDescription && (
             <div className={styles.columnText}>
               <Text description={description} />
