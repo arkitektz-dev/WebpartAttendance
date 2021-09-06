@@ -118,6 +118,7 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
 
       await fileService.addFile(fileObj, ConfigurationFileInfo.uploadPath);
       this.properties.webpartConfiguration = WebpartConfiguration;
+      this._webpartConfiguration = WebpartConfiguration;
     } else {
       const file: IWebpartConfiguration = await fileService.readFile(
         ConfigurationFileInfo.fullPath

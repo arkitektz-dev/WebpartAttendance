@@ -4,9 +4,6 @@
   button {
     outline: transparent;
     position: relative;
-    font-size: "[theme: mediumFontSize, default: 14px]";
-    font-family: "[theme:  mediumFontFamily, default: sans-serif]";
-    font-weight: "[theme:  mediumFontWeight, default: 400]";
     box-sizing: border-box;
     display: inline-block;
     text-decoration: none;
@@ -14,7 +11,7 @@
     cursor: default;
     padding: 0.2rem 1rem;
     min-width: 80px;
-    background-color: rgb(243, 242, 241);
+    background-color: transparent;
     max-width: 100%;
     user-select: none;
   }
@@ -39,6 +36,9 @@
   .timeinLabel {
     margin-right: 5px;
     color: "[theme: bodyText, default: #0078d7]";
+    font-family: "[theme: mediumFontFamily, default: sans-serif]";
+    font-size: "[theme: mediumFontSize, default: 14px]";
+    font-weight: "[theme: mediumFontWeight, default: 400]";
   }
 
   .label {
@@ -50,7 +50,10 @@
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 100%;
-    // color: "[theme: themeSecondary, default: #ae383e]";
+    color: "[theme: bodyText, default: #0078d7]";
+    font-family: "[theme: mediumFontFamily, default: sans-serif]";
+    font-size: "[theme: mediumFontSize, default: 14px]";
+    font-weight: "[theme: mediumFontWeight, default: 400]";
   }
 
   .textContainer {
