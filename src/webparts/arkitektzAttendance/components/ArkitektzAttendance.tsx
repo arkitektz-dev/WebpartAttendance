@@ -76,7 +76,7 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
         setError(null);
       } else {
         locationLabel = "user list item error";
-        setError(error);
+        // setError(error);
       }
       setLoading(false);
     } else {
