@@ -101,7 +101,9 @@ export default function Button(props: IButtonProps) {
 
   return (
     <div className={styles.buttonContainer} style={getContainerStyles()}>
-      {timein && <span className={styles.timeinLabel}>{to12HourFormat(timein)}</span>}
+      {timein && (
+        <span className={styles.timeinLabel}>{to12HourFormat(timein)}</span>
+      )}
       <button
         className={getClasses()}
         style={getStyles()}

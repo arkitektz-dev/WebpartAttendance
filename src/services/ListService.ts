@@ -8,6 +8,7 @@ import "@pnp/sp/fields";
 import "@pnp/sp/lists";
 import "@pnp/sp/views";
 import { IUser } from "./../models/IUser";
+import { IResult } from "../models/IResult";
 
 export class ListService {
   private _web: IWeb = null;
@@ -93,7 +94,7 @@ export class ListService {
 
   public async getAttendanceListItems(
     webpartConfiguration: IWebpartConfiguration
-  ): Promise<IAttendanceListItem> {
+  ): Promise<IResult> {
     const {
       attendanceListSiteURL,
       attendanceListName,
@@ -112,7 +113,7 @@ export class ListService {
     ];
     let toExpand: string[] = [attendanceListUserColumn];
 
-    const response = await web.lists
+    const response: IResult = await web.lists
       .getByTitle(attendanceListName)
       .items.select(...toSelect)
       .expand(...toExpand)
@@ -120,7 +121,11 @@ export class ListService {
       .get()
       .then((res) => {
         // console.log(res);
-        if (res.length === 0) return null;
+        if (res.length === 0)
+          return {
+            entity: null,
+            error: null,
+          };
 
         let attendanceListItem = {} as IAttendanceListItem;
 
@@ -131,7 +136,10 @@ export class ListService {
           timeout: null,
         };
 
-        return attendanceListItem;
+        return {
+          entity: attendanceListItem,
+          error: null,
+        };
       })
       .catch((error) => {
         console.log(
@@ -141,7 +149,10 @@ export class ListService {
           "\n'Error':",
           error
         );
-        return null;
+        return {
+          entity: null,
+          error: "Get current attendance failed",
+        };
       });
 
     return response;
@@ -149,7 +160,7 @@ export class ListService {
 
   public async getUserListItems(
     webpartConfiguration: IWebpartConfiguration
-  ): Promise<IUser> {
+  ): Promise<IResult> {
     const {
       usersListSiteURL,
       usersListName,
@@ -195,7 +206,10 @@ export class ListService {
           user.officeLocationCoordinates = null;
         }
 
-        return user;
+        return {
+          entity: user,
+          error: null,
+        };
       })
       .catch((error) => {
         console.log(
@@ -205,7 +219,10 @@ export class ListService {
           "\n'Error':",
           error
         );
-        return null;
+        return {
+          entity: null,
+          error: "Get user failed",
+        };
       });
 
     return response;
@@ -214,7 +231,7 @@ export class ListService {
   public async saveListItem(
     webpartConfiguration: IWebpartConfiguration,
     attendanceListItem: IAttendanceListItem
-  ): Promise<IAttendanceListItem> {
+  ): Promise<IResult> {
     const {
       attendanceListSiteURL,
       attendanceListName,
@@ -255,7 +272,10 @@ export class ListService {
 
         // console.log(attendanceListItem);
 
-        return itemObj;
+        return {
+          entity: itemObj,
+          error: null,
+        };
       })
       .catch((error) => {
         console.log(
@@ -265,7 +285,10 @@ export class ListService {
           "\n'Error':",
           error
         );
-        return null;
+        return {
+          entity: null,
+          error: "Checkin failed",
+        };
       });
 
     return response;
@@ -274,7 +297,7 @@ export class ListService {
   public async updateListItem(
     webpartConfiguration: IWebpartConfiguration,
     attendanceListItem: IAttendanceListItem
-  ): Promise<boolean> {
+  ): Promise<IResult> {
     const {
       attendanceListSiteURL,
       attendanceListName,
@@ -296,7 +319,10 @@ export class ListService {
       .update(obj)
       .then((res) => {
         // console.log(res);
-        return true;
+        return {
+          entity: res.data,
+          error: null,
+        };
       })
       .catch((error) => {
         console.log(
@@ -306,7 +332,10 @@ export class ListService {
           "\n'Error':",
           error
         );
-        return false;
+        return {
+          entity: null,
+          error: "Checkout failed",
+        };
       });
 
     return response;

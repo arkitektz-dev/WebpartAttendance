@@ -2,6 +2,7 @@ import * as React from "react";
 import styles from "./ArkitektzAttendance.module.scss";
 import { IArkitektzAttendanceProps } from "./IArkitektzAttendanceProps";
 import { escape } from "@microsoft/sp-lodash-subset";
+import { MessageBar, MessageBarType } from "office-ui-fabric-react";
 import SiteService from "../../../services/SiteService";
 import FileService from "../../../services/FileService";
 import ListService from "../../../services/ListService";
@@ -25,6 +26,7 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
   );
   const [item, setItem] = React.useState<IAttendanceListItem>(null);
   const [loading, setLoading] = React.useState<boolean>(false);
+  const [error, setError] = React.useState<string>(null);
 
   const {
     webpartConfiguration,
@@ -33,9 +35,8 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
     showDescription,
     description,
     buttonText,
+    attendanceListSourceConfigurationType,
   } = props;
-
-  console.log(props);
 
   const listService = new ListService(context);
   const userService = new UserService(context);
@@ -46,7 +47,6 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
 
   const onTimein = async () => {
     setLoading(true);
-
     const currentUser = await userService.getCurrentUserByEmail(
       webpartConfiguration.attendanceListSiteURL
     );
@@ -57,36 +57,44 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
     let locationLabel: string = "";
     if (useGeoLocation) {
       const currentCoordinates: IGeoLocation = await getCurrentCoordinates();
-      const user: IUser = await listService.getUserListItems(
+      const { entity, error } = await listService.getUserListItems(
         webpartConfiguration
       );
-
-      const { distance }: IGeoLocation = calculateDistance({
-        latitude1: currentCoordinates.latitude,
-        longitude1: currentCoordinates.longitude,
-        latitude2: user.officeLocationCoordinates.latitude,
-        longitude2: user.officeLocationCoordinates.longitude,
-      });
-      console.log(distance);
-
-      attendanceListItem.locationCoordinates = `${currentCoordinates.latitude}, ${currentCoordinates.longitude}`;
-      locationLabel =
-        distance > props.radius
-          ? LocationLabelOptions.Remotely
-          : LocationLabelOptions.Office;
+      if (entity) {
+        const { distance }: IGeoLocation = calculateDistance({
+          latitude1: currentCoordinates.latitude,
+          longitude1: currentCoordinates.longitude,
+          latitude2: entity.officeLocationCoordinates.latitude,
+          longitude2: entity.officeLocationCoordinates.longitude,
+        });
+        console.log(distance);
+        attendanceListItem.locationCoordinates = `${currentCoordinates.latitude}, ${currentCoordinates.longitude}`;
+        locationLabel =
+          distance > props.radius
+            ? LocationLabelOptions.Remotely
+            : LocationLabelOptions.Office;
+        setError(null);
+      } else {
+        locationLabel = "user list item error";
+        setError(error);
+      }
+      setLoading(false);
     } else {
       locationLabel = webpartConfiguration.noLocationLabel;
     }
-
     attendanceListItem.locationLabel = locationLabel;
-    const result = await listService.saveListItem(
+    const { entity, error } = await listService.saveListItem(
       webpartConfiguration,
       attendanceListItem
     );
-    if (result) {
+    if (entity) {
       setStatus(StatusOptions.Timeout);
-      setItem(result);
+      setItem(entity);
+      setError(null);
+    } else {
+      setError(error);
     }
+
     setLoading(false);
   };
 
@@ -99,16 +107,19 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
       timein: item.timein,
     };
 
-    const result = await listService.updateListItem(
+    const { entity, error } = await listService.updateListItem(
       webpartConfiguration,
       attendanceListItem
     );
 
-    if (result) {
+    if (entity) {
       setStatus(StatusOptions.Timein);
       setItem(null);
+      setError(null);
     } else {
+      setError(error);
     }
+
     setLoading(false);
   };
 
@@ -122,13 +133,19 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
 
   const getAttendance = async () => {
     setLoading(true);
-    const result = await listService.getAttendanceListItems(
+    const { entity, error } = await listService.getAttendanceListItems(
       webpartConfiguration
     );
-
-    if (result) {
+    if (!entity && !error) {
+      setError(null);
+    }
+    if (entity) {
       setStatus(StatusOptions.Timeout);
-      setItem(result);
+      setItem(entity);
+      setError(null);
+    }
+    if (error) {
+      setError(error);
     }
     setLoading(false);
   };
@@ -139,7 +156,7 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
 
   React.useEffect(() => {
     getAttendance();
-  }, []);
+  }, [attendanceListSourceConfigurationType]);
 
   React.useEffect(() => {
     console.log(status, item, loading, "state");
@@ -166,6 +183,12 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
             backgroundColor: props.themeVariant.semanticColors.bodyBackground,
           }}
         >
+          {error && (
+            <MessageBar messageBarType={MessageBarType.error}>
+              {error}
+            </MessageBar>
+          )}
+          <br />
           {showDescription && (
             <div className={styles.columnText}>
               <Text description={description} />

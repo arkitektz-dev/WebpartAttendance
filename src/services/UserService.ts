@@ -26,7 +26,7 @@ export class UserService {
       })
       .catch((error) => {
         console.log(
-          "'Method Name': List Service --> getCurrentUserByEmail",
+          "'Method Name': User Service --> getCurrentUserByEmail",
           "\n'Message':",
           error.message,
           "\n'Error':",
