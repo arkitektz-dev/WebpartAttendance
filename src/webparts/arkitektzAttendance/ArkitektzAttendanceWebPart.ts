@@ -152,6 +152,12 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
         //attendance source
         attendanceListSourceConfigurationType:
           this.properties.attendanceListSourceConfigurationType,
+        attendanceListSourceSite: this.properties.attendanceListSourceSite,
+        attendanceListName: this.properties.attendanceListName,
+        attendanceListUserColumn: this.properties.attendanceListUserColumn,
+        attendanceListTimeinColumn: this.properties.attendanceListTimeinColumn,
+        attendanceListTimeoutColumn:
+          this.properties.attendanceListTimeoutColumn,
         //theme
         themeVariant: this._themeVariant,
       });

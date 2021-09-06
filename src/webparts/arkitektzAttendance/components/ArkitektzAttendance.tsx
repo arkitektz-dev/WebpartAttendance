@@ -36,6 +36,11 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
     description,
     buttonText,
     attendanceListSourceConfigurationType,
+    attendanceListSourceSite,
+    attendanceListName,
+    attendanceListUserColumn,
+    attendanceListTimeinColumn,
+    attendanceListTimeoutColumn,
   } = props;
 
   const listService = new ListService(context);
@@ -154,14 +159,23 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
   };
 
   React.useEffect(() => {
-    getAttendance();
-  }, [attendanceListSourceConfigurationType]);
+    if (attendanceListSourceConfigurationType) {
+      getAttendance();
+    }
+  }, [
+    attendanceListSourceConfigurationType,
+    attendanceListSourceSite,
+    attendanceListName,
+    attendanceListUserColumn,
+    attendanceListTimeinColumn,
+    attendanceListTimeoutColumn,
+  ]);
 
   React.useEffect(() => {
     console.log(status, item, loading, "state");
   }, [status, item, loading]);
 
-  if (!props.attendanceListSourceConfigurationType) {
+  if (!attendanceListSourceConfigurationType) {
     return (
       <Placeholder
         iconName="Edit"

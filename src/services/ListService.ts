@@ -102,60 +102,60 @@ export class ListService {
       attendanceListTimeinColumn,
       attendanceListTimeoutColumn,
     } = webpartConfiguration;
-    const web = Web(attendanceListSiteURL);
-    let filterstring = `${attendanceListUserColumn}/EMail eq '${this._currentUser}' and ${attendanceListTimeoutColumn} eq null`;
-    let toSelect: string[] = [
-      "Id",
-      attendanceListTimeinColumn,
-      attendanceListTimeoutColumn,
-      `${attendanceListUserColumn}/Title`,
-      `${attendanceListUserColumn}/EMail`,
-    ];
-    let toExpand: string[] = [attendanceListUserColumn];
+    try {
+      const web = Web(attendanceListSiteURL);
+      let filterstring = `${attendanceListUserColumn}/EMail eq '${this._currentUser}' and ${attendanceListTimeoutColumn} eq null`;
+      let toSelect: string[] = [
+        "Id",
+        attendanceListTimeinColumn,
+        attendanceListTimeoutColumn,
+        `${attendanceListUserColumn}/Title`,
+        `${attendanceListUserColumn}/EMail`,
+      ];
+      let toExpand: string[] = [attendanceListUserColumn];
 
-    const response: IResult = await web.lists
-      .getByTitle(attendanceListName)
-      .items.select(...toSelect)
-      .expand(...toExpand)
-      .filter(filterstring)
-      .get()
-      .then((res) => {
-        // console.log(res);
-        if (res.length === 0)
-          return {
-            entity: null,
-            error: null,
+      const response: IResult = await web.lists
+        .getByTitle(attendanceListName)
+        .items.select(...toSelect)
+        .expand(...toExpand)
+        .filter(filterstring)
+        .get()
+        .then((res) => {
+          // console.log(res);
+          if (res.length === 0)
+            return {
+              entity: null,
+              error: null,
+            };
+
+          let attendanceListItem = {} as IAttendanceListItem;
+
+          attendanceListItem = {
+            id: res[0].Id,
+            userId: null,
+            timein: res[0][attendanceListTimeinColumn],
+            timeout: null,
           };
 
-        let attendanceListItem = {} as IAttendanceListItem;
-
-        attendanceListItem = {
-          id: res[0].Id,
-          userId: null,
-          timein: res[0][attendanceListTimeinColumn],
-          timeout: null,
-        };
-
-        return {
-          entity: attendanceListItem,
-          error: null,
-        };
-      })
-      .catch((error) => {
-        console.log(
-          "'Method Name': List Service->getAttendanceListItems",
-          "\n'Message':",
-          error.message,
-          "\n'Error':",
-          error
-        );
-        return {
-          entity: null,
-          error: "Get current attendance failed",
-        };
-      });
-
-    return response;
+          return {
+            entity: attendanceListItem,
+            error: null,
+          };
+        });
+      return response;
+    } catch (error) {
+      console.log(
+        "'Method Name': List Service->getAttendanceListItems",
+        "\n'Message':",
+        error.message,
+        "\n'Error':",
+        error
+      );
+      return {
+        entity: null,
+        error: "Configurations are not valid",
+      };
+    }
   }
 
   public async getUserListItems(
