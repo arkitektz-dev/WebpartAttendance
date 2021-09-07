@@ -168,64 +168,65 @@ export class ListService {
       usersListOfficeLocationCoordinatesColumn,
     } = webpartConfiguration;
 
-    const web = Web(usersListSiteURL);
-    let filterstring = `${usersListTitleColumn}/EMail eq '${this._currentUser}'`;
-    let toSelect: string[] = [
-      `${usersListTitleColumn}/EMail`,
-      usersListOfficeLocationCoordinatesColumn,
-    ];
-    let toExpand: string[] = [usersListTitleColumn];
+    try {
+      const web = Web(usersListSiteURL);
+      let filterstring = `${usersListTitleColumn}/EMail eq '${this._currentUser}'`;
+      let toSelect: string[] = [
+        `${usersListTitleColumn}/EMail`,
+        usersListOfficeLocationCoordinatesColumn,
+      ];
+      let toExpand: string[] = [usersListTitleColumn];
 
-    const response = await web.lists
-      .getByTitle(usersListName)
-      .items.select(...toSelect)
-      .expand(...toExpand)
-      .filter(filterstring)
-      .get()
-      .then((res) => {
-        console.log(res);
-        if (res.length === 0) return null;
-        let user = {} as IUser;
-        user = {
-          email: res[0][usersListTitleColumn]["EMail"],
-        };
+      const response = await web.lists
+        .getByTitle(usersListName)
+        .items.select(...toSelect)
+        .expand(...toExpand)
+        .filter(filterstring)
+        .get()
+        .then((res) => {
+          console.log(res);
+          if (res.length === 0) return null;
+          let user = {} as IUser;
+          user = {
+            email: res[0][usersListTitleColumn]["EMail"],
+          };
 
-        if (res[0][usersListOfficeLocationCoordinatesColumn]) {
-          const officeLocationCoordinates =
-            res[0][usersListOfficeLocationCoordinatesColumn].split(",");
+          if (res[0][usersListOfficeLocationCoordinatesColumn]) {
+            const officeLocationCoordinates =
+              res[0][usersListOfficeLocationCoordinatesColumn].split(",");
 
-          if (officeLocationCoordinates.length === 2) {
-            user.officeLocationCoordinates = {
-              latitude: officeLocationCoordinates[0],
-              longitude: officeLocationCoordinates[1],
-            };
+            if (officeLocationCoordinates.length === 2) {
+              user.officeLocationCoordinates = {
+                latitude: officeLocationCoordinates[0],
+                longitude: officeLocationCoordinates[1],
+              };
+            } else {
+              user.officeLocationCoordinates = null;
+            }
           } else {
             user.officeLocationCoordinates = null;
           }
-        } else {
-          user.officeLocationCoordinates = null;
-        }
 
-        return {
-          entity: user,
-          error: null,
-        };
-      })
-      .catch((error) => {
-        console.log(
-          "'Method Name': List Service --> getUserListItems",
-          "\n'Message':",
-          error.message,
-          "\n'Error':",
-          error
-        );
-        return {
-          entity: null,
-          error: "Get user failed",
-        };
-      });
+          return {
+            entity: user,
+            error: null,
+          };
+        });
 
-    return response;
+      return response;
+    } catch (error) {
+      console.log(
+        "'Method Name': List Service --> getUserListItems",
+        "\n'Message':",
+        error.message,
+        "\n'Error':",
+        error
+      );
+      return {
+        entity: null,
+        error: "Get user failed",
+      };
+    }
   }
 
   public async saveListItem(

@@ -16,7 +16,11 @@ export interface IArkitektzAttendanceProps {
   // configuration
   useGeoLocation: boolean;
   radius: number;
-
+  usersListSourceConfigurationType: ConfigurationTypeOptions;
+  usersListSourceSite: IPropertyFieldSite[];
+  usersListName: string;
+  usersListTitleColumn: string;
+  usersListOfficeLocationCoordinatesColumn: string;
   //appearance
   buttonText: string;
   buttonAppearance: string;

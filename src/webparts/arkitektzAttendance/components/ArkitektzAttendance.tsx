@@ -21,13 +21,6 @@ import { Placeholder } from "@pnp/spfx-controls-react/lib/Placeholder";
 import { IUser } from "./../../../models/IUser";
 
 export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
-  const [status, setStatus] = React.useState<StatusOptions>(
-    StatusOptions.Timein
-  );
-  const [item, setItem] = React.useState<IAttendanceListItem>(null);
-  const [loading, setLoading] = React.useState<boolean>(false);
-  const [error, setError] = React.useState<string>(null);
-
   const {
     webpartConfiguration,
     context,
@@ -41,7 +34,23 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
     attendanceListUserColumn,
     attendanceListTimeinColumn,
     attendanceListTimeoutColumn,
+    usersListSourceConfigurationType,
+    usersListSourceSite,
+    usersListName,
+    usersListTitleColumn,
+    usersListOfficeLocationCoordinatesColumn,
   } = props;
+
+  const [status, setStatus] = React.useState<StatusOptions>(
+    StatusOptions.Timein
+  );
+  const [item, setItem] = React.useState<IAttendanceListItem>(null);
+  const [loading, setLoading] = React.useState<boolean>(false);
+  const [error, setError] = React.useState<string>(null);
+  const [user, setUser] = React.useState<IUser>(null);
+
+  const [locationCoordinates, setLocationCoordinates] =
+    React.useState<string>(null);
 
   const listService = new ListService(context);
   const userService = new UserService(context);
@@ -51,26 +60,24 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
   };
 
   const onTimein = async () => {
-    setLoading(true);
-    const currentUser = await userService.getCurrentUserByEmail(
-      webpartConfiguration.attendanceListSiteURL
-    );
-    const attendanceListItem: IAttendanceListItem = {
-      userId: currentUser.Id,
-      timein: toISOString(new Date()),
-    };
-    let locationLabel: string = "";
-    if (useGeoLocation) {
-      const currentCoordinates: IGeoLocation = await getCurrentCoordinates();
-      const { entity, error } = await listService.getUserListItems(
-        webpartConfiguration
+    if (!error) {
+      setLoading(true);
+      const currentUser = await userService.getCurrentUserByEmail(
+        webpartConfiguration.attendanceListSiteURL
       );
-      if (entity) {
+      const attendanceListItem: IAttendanceListItem = {
+        userId: currentUser.Id,
+        timein: toISOString(new Date()),
+      };
+
+      let locationLabel: string = "";
+      if (useGeoLocation && user) {
+        const currentCoordinates: IGeoLocation = await getCurrentCoordinates();
         const { distance }: IGeoLocation = calculateDistance({
           latitude1: currentCoordinates.latitude,
           longitude1: currentCoordinates.longitude,
-          latitude2: entity.officeLocationCoordinates.latitude,
-          longitude2: entity.officeLocationCoordinates.longitude,
+          latitude2: user.officeLocationCoordinates.latitude,
+          longitude2: user.officeLocationCoordinates.longitude,
         });
         console.log(distance);
         attendanceListItem.locationCoordinates = `${currentCoordinates.latitude}, ${currentCoordinates.longitude}`;
@@ -80,26 +87,24 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
             : LocationLabelOptions.Office;
         setError(null);
       } else {
-        locationLabel = "user list item error";
+        locationLabel = webpartConfiguration.noLocationLabel;
       }
-      setLoading(false);
-    } else {
-      locationLabel = webpartConfiguration.noLocationLabel;
-    }
-    attendanceListItem.locationLabel = locationLabel;
-    const { entity, error } = await listService.saveListItem(
-      webpartConfiguration,
-      attendanceListItem
-    );
-    if (entity) {
-      setStatus(StatusOptions.Timeout);
-      setItem(entity);
-      setError(null);
-    } else {
-      setError(error);
-    }
+      attendanceListItem.locationLabel = locationLabel;
 
-    setLoading(false);
+      const { entity, error } = await listService.saveListItem(
+        webpartConfiguration,
+        attendanceListItem
+      );
+      if (entity) {
+        setStatus(StatusOptions.Timeout);
+        setItem(entity);
+        setError(null);
+      } else {
+        setError(error);
+      }
+
+      setLoading(false);
+    }
   };
 
   const onTimeout = async () => {
@@ -154,6 +159,19 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
     setLoading(false);
   };
 
+  const getUser = async () => {
+    const { entity, error } = await listService.getUserListItems(
+      webpartConfiguration
+    );
+    if (entity) {
+      setUser(entity);
+      setError(null);
+    } else {
+      setError(error);
+    }
+    setLoading(false);
+  };
+
   const _onConfigure = () => {
     props.context.propertyPane.open();
   };
@@ -169,6 +187,19 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
     attendanceListUserColumn,
     attendanceListTimeinColumn,
     attendanceListTimeoutColumn,
+  ]);
+
+  React.useEffect(() => {
+    if (useGeoLocation) {
+      getUser();
+    }
+  }, [
+    useGeoLocation,
+    usersListSourceConfigurationType,
+    usersListSourceSite,
+    usersListName,
+    usersListTitleColumn,
+    usersListOfficeLocationCoordinatesColumn,
   ]);
 
   React.useEffect(() => {

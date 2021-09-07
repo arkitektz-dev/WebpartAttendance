@@ -142,6 +142,13 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
         //configuration
         useGeoLocation: this.properties.useGeoLocation,
         radius: this.properties.radius,
+        usersListSourceConfigurationType:
+          this.properties.usersListSourceConfigurationType,
+        usersListSourceSite: this.properties.usersListSourceSite,
+        usersListName: this.properties.usersListName,
+        usersListTitleColumn: this.properties.usersListTitleColumn,
+        usersListOfficeLocationCoordinatesColumn:
+          this.properties.usersListOfficeLocationCoordinatesColumn,
         //appearance
         buttonText: this.properties.buttonText,
         buttonAppearance: this.properties.buttonAppearance,
