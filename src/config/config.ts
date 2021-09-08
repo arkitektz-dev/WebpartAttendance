@@ -8,6 +8,14 @@ export const ConfigurationFileInfo = {
   folderName: "Arkitektz",
 };
 
+export const LogFileInfo = {
+  name: "arkitektz-attendance-webpart-log",
+  extension: ".txt",
+  fullPath: "/SiteAssets/Arkitektz/arkitektz-attendance-webpart-log.txt",
+  nameWithExt: "arkitektz-attendance-webpart-log.txt",
+  uploadPath: "/SiteAssets/Arkitektz",
+};
+
 export const WebpartConfiguration = {
   usersListSiteURL: "https://abczxc.sharepoint.com/",
   usersListName: "Users",

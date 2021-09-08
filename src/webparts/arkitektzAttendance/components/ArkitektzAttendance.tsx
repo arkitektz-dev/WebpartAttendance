@@ -19,6 +19,7 @@ import { IAttendanceListItem } from "../../../models/IAttendanceListItem";
 import { IGeoLocation } from "./../../../models/IGeoLocation";
 import { Placeholder } from "@pnp/spfx-controls-react/lib/Placeholder";
 import { IUser } from "./../../../models/IUser";
+import { LogFileInfo } from "../../../config/config";
 
 export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
   const {
@@ -49,11 +50,9 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
   const [error, setError] = React.useState<string>(null);
   const [user, setUser] = React.useState<IUser>(null);
 
-  const [locationCoordinates, setLocationCoordinates] =
-    React.useState<string>(null);
-
   const listService = new ListService(context);
   const userService = new UserService(context);
+  const fileService = new FileService(context);
 
   const getButtonLayoutClass = () => {
     return showDescription ? styles.columnButton : styles.columnOnlyButton;
@@ -101,6 +100,7 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
         setError(null);
       } else {
         setError(error);
+        await fileService.appendContentInFile(error, LogFileInfo.fullPath);
       }
 
       setLoading(false);
@@ -127,6 +127,7 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
       setError(null);
     } else {
       setError(error);
+      await fileService.appendContentInFile(error, LogFileInfo.fullPath);
     }
 
     setLoading(false);
@@ -155,6 +156,7 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
     }
     if (error) {
       setError(error);
+      await fileService.appendContentInFile(error, LogFileInfo.fullPath);
     }
     setLoading(false);
   };
@@ -168,6 +170,7 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
       setError(null);
     } else {
       setError(error);
+      await fileService.appendContentInFile(error, LogFileInfo.fullPath);
     }
     setLoading(false);
   };

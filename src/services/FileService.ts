@@ -154,6 +154,22 @@ export class FileService {
 
     return response;
   }
+
+  public async appendContentInFile(
+    content: string,
+
+    filePath: string
+  ): Promise<any> {
+    const oldContent = await this._web
+      .getFileByServerRelativeUrl(filePath)
+      .getText();
+
+    const response = await this._web
+      .getFileByServerRelativeUrl(filePath)
+      .setContent(`${oldContent}\n${content}`);
+
+    return response;
+  }
 }
 
 export default FileService;

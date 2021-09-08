@@ -41,6 +41,7 @@ import { IWebpartConfiguration } from "./../../models/IWebpartConfiguration";
 import {
   ConfigurationFileInfo,
   WebpartConfiguration,
+  LogFileInfo,
 } from "./../../config/config";
 
 export interface IArkitektzAttendanceWebPartProps {
@@ -107,6 +108,10 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
       ConfigurationFileInfo.fullPath
     );
 
+    const isLogFileExist = await fileService.checkFileExist(
+      LogFileInfo.fullPath
+    );
+
     if (!isFileExist) {
       const fileObj = new File(
         [JSON.stringify(WebpartConfiguration)],
@@ -124,6 +129,13 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
         ConfigurationFileInfo.fullPath
       );
       this._webpartConfiguration = file;
+    }
+
+    if (!isLogFileExist) {
+      const fileObj = new File([""], LogFileInfo.nameWithExt, {
+        type: "text/plain",
+      });
+      await fileService.addFile(fileObj, ConfigurationFileInfo.uploadPath);
     }
 
     this.initializeProperties();
