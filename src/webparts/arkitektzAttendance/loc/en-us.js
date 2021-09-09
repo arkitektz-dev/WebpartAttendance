@@ -47,6 +47,11 @@ define([], function () {
           IconPickerFieldLabel: "Select Icon",
           IconPickerFieldButtonLabel: "Icon",
         },
+        LayoutFieldLabel: "Layout",
+        LayoutOptions: {
+          Layout1: "Layout1",
+          Layout2: "Layout2",
+        },
       },
       AttendanceSourceGroup: {
         GroupName: "Attendance Configuration",

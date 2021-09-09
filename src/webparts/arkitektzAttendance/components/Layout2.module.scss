@@ -18,11 +18,10 @@
           small {
             color: "[theme: primaryButtonBackground, default: #0078d7]" !important;
             word-spacing: 1px;
-            margin-left: 5px;
+            margin-left: 10px;
           }
         }
         .punchDet {
-          background-color: #f9f9f9;
           border: 1px solid #e3e3e3;
           border-radius: 4px;
           margin-bottom: 20px;
@@ -33,6 +32,7 @@
             margin-bottom: 0;
             font-size: 0.75rem;
             margin-top: 0;
+            color: "[theme: bodyText, default: #0078d7]";
           }
           p {
             margin-top: 0;
@@ -47,9 +47,7 @@
         .punchInfo {
           margin-bottom: 20px;
           .punchHours {
-            color: "[theme: bodyText, default: #0078d7]";
             align-items: center;
-            background-color: #fff;
             border: 5px solid;
             border-color: "[theme: primaryButtonBackground]";
             border-radius: 50%;
@@ -60,6 +58,9 @@
             margin: 0 auto;
             width: 120px;
             font-weight: 500;
+            span {
+              color: "[theme: bodyText, default: #0078d7]";
+            }
           }
         }
         .punchBtnSection {

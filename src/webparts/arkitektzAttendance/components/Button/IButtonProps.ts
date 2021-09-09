@@ -7,4 +7,5 @@ export interface IButtonProps {
   loading: boolean;
   status: StatusOptions;
   onButtonClick: any;
+  layout: string;
 }

@@ -5,6 +5,7 @@ import {
   IconPlacementOptions,
   ButtonAppearanceOptions,
   ButtonAlignmentOptions,
+  LayoutOptions,
 } from "./../../../../models/Options";
 import { Icon } from "@fluentui/react/lib/Icon";
 import { Spinner, SpinnerSize } from "@fluentui/react/lib/Spinner";
@@ -12,7 +13,8 @@ import { StatusOptions } from "./../../../../models/Options";
 import { to12HourFormat } from "../../../../utils/dateUtils";
 
 export default function Button(props: IButtonProps) {
-  const { label, timein, status, loading, uiOptions, onButtonClick } = props;
+  const { label, timein, status, loading, uiOptions, onButtonClick, layout } =
+    props;
 
   const getStyles = () => {
     let buttonStyles: any = {};
@@ -101,7 +103,7 @@ export default function Button(props: IButtonProps) {
 
   return (
     <div className={styles.buttonContainer} style={getContainerStyles()}>
-      {timein && (
+      {timein && layout === LayoutOptions.Layout1 && (
         <span className={styles.timeinLabel}>{to12HourFormat(timein)}</span>
       )}
       <button

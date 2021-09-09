@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as moment from "moment";
 import styles from "./ArkitektzAttendance.module.scss";
 import { IArkitektzAttendanceProps } from "./IArkitektzAttendanceProps";
 import { MessageBar, MessageBarType } from "office-ui-fabric-react";
@@ -7,7 +8,11 @@ import ListService from "../../../services/ListService";
 import UserService from "../../../services/UserService";
 import Text from "./Text/Text";
 import Button from "./Button/Button";
-import { LocationLabelOptions, StatusOptions } from "../../../models/Options";
+import {
+  LocationLabelOptions,
+  StatusOptions,
+  LayoutOptions,
+} from "../../../models/Options";
 import { toISOString } from "./../../../utils/dateUtils";
 import {
   calculateDistance,
@@ -39,6 +44,7 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
     usersListName,
     usersListTitleColumn,
     usersListOfficeLocationCoordinatesColumn,
+    layout,
   } = props;
 
   const [status, setStatus] = React.useState<StatusOptions>(
@@ -249,83 +255,95 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
   return (
     <div className={styles.arkitektzAttendance}>
       <div className={styles.container}>
-        <div
-          className={styles.row}
-          style={{
-            backgroundColor: props.themeVariant.semanticColors.bodyBackground,
-          }}
-        >
-          {error && (
-            <MessageBar messageBarType={MessageBarType.error}>
-              {error}
-            </MessageBar>
-          )}
-          {!error && locationError && (
-            <MessageBar messageBarType={MessageBarType.error}>
-              {locationError}
-            </MessageBar>
-          )}
-          <br />
-          {showDescription && (
-            <div className={styles.columnText}>
-              <Text description={description} />
-            </div>
-          )}
+        {layout === LayoutOptions.Layout1 ? (
+          <div
+            className={styles.row}
+            style={{
+              backgroundColor: props.themeVariant.semanticColors.bodyBackground,
+            }}
+          >
+            {error && (
+              <MessageBar messageBarType={MessageBarType.error}>
+                {error}
+              </MessageBar>
+            )}
+            {!error && locationError && (
+              <MessageBar messageBarType={MessageBarType.error}>
+                {locationError}
+              </MessageBar>
+            )}
+            <br />
+            {showDescription && (
+              <div className={styles.columnText}>
+                <Text description={description} />
+              </div>
+            )}
 
-          <div className={getButtonLayoutClass()}>
-            <div className={styles.row}>
-              <Button
-                label={buttonText}
-                timein={item ? item.timein : ""}
-                status={status}
-                loading={loading}
-                uiOptions={{
-                  appearance: props.buttonAppearance,
-                  borderRadius: props.buttonBorderRadius,
-                  alignment: props.buttonAlignment,
-                  iconPlacement: props.iconPlacement,
-                  selectedIcon: props.selectedIcon,
-                }}
-                onButtonClick={onButtonClick}
-              />
+            <div className={getButtonLayoutClass()}>
+              <div className={styles.row}>
+                <Button
+                  label={buttonText}
+                  timein={item ? item.timein : ""}
+                  status={status}
+                  loading={loading}
+                  uiOptions={{
+                    appearance: props.buttonAppearance,
+                    borderRadius: props.buttonBorderRadius,
+                    alignment: props.buttonAlignment,
+                    iconPlacement: props.iconPlacement,
+                    selectedIcon: props.selectedIcon,
+                  }}
+                  onButtonClick={onButtonClick}
+                  layout={layout}
+                />
+              </div>
             </div>
           </div>
-        </div>
-        <div className={layoutStyles.layout}>
-          <div className={layoutStyles.container}>
-            <div className={layoutStyles.card}>
-              <div className={layoutStyles.cardBody}>
-                <h5 className={layoutStyles.cardTitle}>
-                  Timesheet <small>11 Mar 2019</small>
-                </h5>
-                <div className={layoutStyles.punchDet}>
-                  <h6>Punch In at</h6>
-                  <p>Wed, 11th Mar 2019 10.00 AM</p>
-                </div>
-                <div className={layoutStyles.punchInfo}>
-                  <div className={layoutStyles.punchHours}>
-                    <span>3.45 hrs</span>
+        ) : (
+          <div className={layoutStyles.layout}>
+            <div className={layoutStyles.container}>
+              <div className={layoutStyles.card}>
+                <div className={layoutStyles.cardBody}>
+                  <h5 className={layoutStyles.cardTitle}>
+                    Timesheet
+                    <small>
+                      {`${moment(new Date()).format("Do MMM YYYY")} `}
+                    </small>
+                  </h5>
+                  {item && (
+                    <div className={layoutStyles.punchDet}>
+                      <h6>Punch In at</h6>
+                      <p>
+                        {`${moment(item ? item.timein : "").format(
+                          "dd, Do MMM YYYY h:mm A"
+                        )}`}
+                      </p>
+                    </div>
+                  )}
+                  <div className={layoutStyles.punchInfo}>
+                    <div className={layoutStyles.punchHours}>
+                      <span>{`${moment(new Date()).format("dddd")}`}</span>
+                    </div>
                   </div>
-                </div>
-                <div className={layoutStyles.punchBtnSection}>
-                  {/* <button>Punch Out</button> */}
-                  <Button
-                    label={buttonText}
-                    timein={item ? item.timein : ""}
-                    status={status}
-                    loading={loading}
-                    uiOptions={{
-                      appearance: props.buttonAppearance,
-                      borderRadius: props.buttonBorderRadius,
-                      alignment: props.buttonAlignment,
-                      iconPlacement: props.iconPlacement,
-                      selectedIcon: props.selectedIcon,
-                    }}
-                    onButtonClick={onButtonClick}
-                  />
-                </div>
+                  <div className={layoutStyles.punchBtnSection}>
+                    <Button
+                      label={buttonText}
+                      timein={item ? item.timein : ""}
+                      status={status}
+                      loading={loading}
+                      uiOptions={{
+                        appearance: props.buttonAppearance,
+                        borderRadius: props.buttonBorderRadius,
+                        alignment: props.buttonAlignment,
+                        iconPlacement: props.iconPlacement,
+                        selectedIcon: props.selectedIcon,
+                      }}
+                      onButtonClick={onButtonClick}
+                      layout={layout}
+                    />
+                  </div>
 
-                {/* <div className={layoutStyles.stats}>
+                  {/* <div className={layoutStyles.stats}>
                   <div className={layoutStyles.statsContainer}>
                     <div className={layoutStyles.statsBox}>
                       <p>Break</p>
@@ -337,10 +355,11 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
                     </div>
                   </div>
                 </div> */}
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

@@ -33,6 +33,7 @@ import {
   ButtonAppearanceOptions,
   ButtonAlignmentOptions,
   ConfigurationTypeOptions,
+  LayoutOptions,
 } from "../../models/Options";
 import { IDropdownOption } from "office-ui-fabric-react/lib/components/Dropdown";
 import { update, get } from "@microsoft/sp-lodash-subset";
@@ -44,6 +45,9 @@ import {
   WebpartConfiguration,
   LogFileInfo,
 } from "./../../config/config";
+
+const layout1Svg: string = require("./components/assets/layout1.svg");
+const layout2Svg: string = require("./components/assets/layout2.svg");
 
 export interface IArkitektzAttendanceWebPartProps {
   webpartConfiguration: IWebpartConfiguration;
@@ -62,6 +66,7 @@ export interface IArkitektzAttendanceWebPartProps {
   usersListOfficeLocationCoordinatesColumn: string;
   usersListOfficeLatitudeColumn: string;
   usersListOfficeLongitudeColumn: string;
+  layout: string;
 
   //appearance
   buttonText: string;
@@ -164,6 +169,7 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
         usersListTitleColumn: this.properties.usersListTitleColumn,
         usersListOfficeLocationCoordinatesColumn:
           this.properties.usersListOfficeLocationCoordinatesColumn,
+        layout: this.properties.layout,
         //appearance
         buttonText: this.properties.buttonText,
         buttonAppearance: this.properties.buttonAppearance,
@@ -212,6 +218,8 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
     this.properties.usersListSourceConfigurationType =
       this.properties.usersListSourceConfigurationType ||
       ConfigurationTypeOptions.Recommended;
+
+    this.properties.layout = this.properties.layout || LayoutOptions.Layout1;
 
     this.properties.usersListSourceSite =
       this.properties.usersListSourceSite || [];
@@ -752,6 +760,27 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
           },
         ],
         selectedKey: this.properties.iconPlacement,
+      }),
+      PropertyPaneChoiceGroup("layout", {
+        label: webPartStrings.PropertyPane.AppearanceGroup.LayoutFieldLabel,
+        options: [
+          {
+            key: webPartStrings.PropertyPane.AppearanceGroup.LayoutOptions
+              .Layout1,
+            text: webPartStrings.PropertyPane.AppearanceGroup.LayoutOptions
+              .Layout1,
+            selectedImageSrc: layout1Svg,
+            imageSrc: layout1Svg,
+          },
+          {
+            key: webPartStrings.PropertyPane.AppearanceGroup.LayoutOptions
+              .Layout2,
+            text: webPartStrings.PropertyPane.AppearanceGroup.LayoutOptions
+              .Layout2,
+            selectedImageSrc: layout2Svg,
+            imageSrc: layout2Svg,
+          },
+        ],
       }),
     ];
 

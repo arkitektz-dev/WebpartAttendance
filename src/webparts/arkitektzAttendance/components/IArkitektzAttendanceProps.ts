@@ -21,6 +21,8 @@ export interface IArkitektzAttendanceProps {
   usersListName: string;
   usersListTitleColumn: string;
   usersListOfficeLocationCoordinatesColumn: string;
+  layout: string;
+
   //appearance
   buttonText: string;
   buttonAppearance: string;

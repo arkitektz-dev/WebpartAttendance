@@ -31,3 +31,8 @@ export enum LocationLabelOptions {
   "Remotely" = "Remotely",
   "Office" = "Office",
 }
+
+export enum LayoutOptions {
+  "Layout1" = "Layout1",
+  "Layout2" = "Layout2",
+}

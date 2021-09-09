@@ -46,6 +46,11 @@ declare interface IArkitektzAttendanceWebPartStrings {
         IconPickerFieldLabel: string;
         IconPickerFieldButtonLabel: string;
       };
+      LayoutFieldLabel: string;
+      LayoutOptions: {
+        Layout1: string;
+        Layout2: string;
+      };
     };
     AttendanceSourceGroup: {
       GroupName: string;
