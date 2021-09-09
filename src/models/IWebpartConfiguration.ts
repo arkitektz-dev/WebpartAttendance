@@ -3,8 +3,6 @@ export interface IWebpartConfiguration {
   usersListName: string;
   usersListTitleColumn: string;
   usersListOfficeLocationCoordinatesColumn: string;
-  usersListOfficeLatitudeColumn: string;
-  usersListOfficeLongitudeColumn: string;
 
   attendanceListSiteURL: string;
   attendanceListName: string;

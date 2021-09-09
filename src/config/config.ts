@@ -9,10 +9,10 @@ export const ConfigurationFileInfo = {
 };
 
 export const LogFileInfo = {
-  name: "arkitektz-attendance-webpart-log",
+  name: "arkitektz-attendance-webpart-logs",
   extension: ".txt",
-  fullPath: "/SiteAssets/Arkitektz/arkitektz-attendance-webpart-log.txt",
-  nameWithExt: "arkitektz-attendance-webpart-log.txt",
+  fullPath: "/SiteAssets/Arkitektz/arkitektz-attendance-webpart-logs.txt",
+  nameWithExt: "arkitektz-attendance-webpart-logs.txt",
   uploadPath: "/SiteAssets/Arkitektz",
 };
 
@@ -21,8 +21,6 @@ export const WebpartConfiguration = {
   usersListName: "Users",
   usersListTitleColumn: "User",
   usersListOfficeLocationCoordinatesColumn: "Location",
-  usersListOfficeLatitudeColumn: "",
-  usersListOfficeLongitudeColumn: "",
 
   attendanceListSiteURL: "https://abczxc.sharepoint.com/",
   attendanceListName: "Attendance",

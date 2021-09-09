@@ -6,10 +6,12 @@ import "@pnp/sp/folders";
 
 export class FileService {
   private _web: IWeb = null;
+  private _currentUser: string = null;
   private serverRelativeUrl: string = null;
 
   constructor(private _context: WebPartContext) {
     this._web = Web(_context.pageContext.web.absoluteUrl);
+    this._currentUser = this._context.pageContext.user.email;
     this.serverRelativeUrl = _context.pageContext.site.serverRelativeUrl;
   }
 
@@ -24,7 +26,7 @@ export class FileService {
       .select("Exists")
       .get()
       .then((res) => {
-        // console.log(res);
+        // console.log("checkFolderExist", res);
         return res.Exists;
       })
       .catch((error) => {
@@ -136,8 +138,8 @@ export class FileService {
       .select("Exists")
       .get()
       .then((res) => {
-        // console.log(res);
-        return true;
+        // console.log("checkFileExist", res);
+        return res.Exists;
       })
       .catch((error) => {
         console.log(
@@ -155,20 +157,26 @@ export class FileService {
     return response;
   }
 
-  public async appendContentInFile(
-    content: string,
-
+  public async updateLogFileContent(
+    error: Error,
     filePath: string
   ): Promise<any> {
-    const oldContent = await this._web
-      .getFileByServerRelativeUrl(filePath)
-      .getText();
+    try {
+      const currentDate = new Date().toLocaleString();
+      const logEntry = `Time: ${currentDate}\n-----------------------------\nUser: ${this._currentUser}\nType: ${error.name}\nMessage: ${error.message}\nStack Trace: ${error.stack}\n`;
 
-    const response = await this._web
-      .getFileByServerRelativeUrl(filePath)
-      .setContent(`${oldContent}\n${content}`);
+      const oldContent = await this._web
+        .getFileByServerRelativeUrl(filePath)
+        .getText();
 
-    return response;
+      const response = await this._web
+        .getFileByServerRelativeUrl(filePath)
+        .setContent(`${oldContent}\n${logEntry}`);
+
+      return response;
+    } catch (error) {
+      return null;
+    }
   }
 }
 

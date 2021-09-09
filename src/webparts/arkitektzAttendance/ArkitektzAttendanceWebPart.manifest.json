@@ -30,7 +30,7 @@
         "description": "Welcome to the attendance webpart",
 
         // Appearance
-        "buttonText": "Checkin, Checkout",
+        "buttonText": "Check in, Check out",
         "buttonBorderRadius": "10",
 
         //Configuration

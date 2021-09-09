@@ -125,7 +125,7 @@ export class ListService {
           if (res.length === 0)
             return {
               entity: null,
-              error: null,
+              errorDetails: null,
             };
 
           let attendanceListItem = {} as IAttendanceListItem;
@@ -139,7 +139,7 @@ export class ListService {
 
           return {
             entity: attendanceListItem,
-            error: null,
+            errorDetails: null,
           };
         });
       return response;
@@ -153,7 +153,10 @@ export class ListService {
       );
       return {
         entity: null,
-        error: "Configurations are not valid",
+        errorDetails: {
+          errorObj: error,
+          clientMessage: "Configurations are not valid",
+        },
       };
     }
   }
@@ -184,8 +187,13 @@ export class ListService {
         .filter(filterstring)
         .get()
         .then((res) => {
-          console.log(res);
-          if (res.length === 0) return null;
+          // console.log(res);
+          if (res.length === 0)
+            return {
+              entity: null,
+              errorDetails: null,
+            };
+
           let user = {} as IUser;
           user = {
             email: res[0][usersListTitleColumn]["EMail"],
@@ -209,7 +217,7 @@ export class ListService {
 
           return {
             entity: user,
-            error: null,
+            errorDetails: null,
           };
         });
 
@@ -224,7 +232,10 @@ export class ListService {
       );
       return {
         entity: null,
-        error: "Get user failed",
+        errorDetails: {
+          errorObj: error,
+          clientMessage: "Configurations are not valid",
+        },
       };
     }
   }
@@ -275,7 +286,7 @@ export class ListService {
 
         return {
           entity: itemObj,
-          error: null,
+          errorDetails: null,
         };
       })
       .catch((error) => {
@@ -288,7 +299,10 @@ export class ListService {
         );
         return {
           entity: null,
-          error: "Checkin failed",
+          errorDetails: {
+            errorObj: error,
+            clientMessage: "Configurations are not valid",
+          },
         };
       });
 
@@ -322,7 +336,7 @@ export class ListService {
         // console.log(res);
         return {
           entity: res.data,
-          error: null,
+          errorDetails: null,
         };
       })
       .catch((error) => {
@@ -335,7 +349,10 @@ export class ListService {
         );
         return {
           entity: null,
-          error: "Checkout failed",
+          errorDetails: {
+            errorObj: error,
+            clientMessage: "Configurations are not valid",
+          },
         };
       });
 

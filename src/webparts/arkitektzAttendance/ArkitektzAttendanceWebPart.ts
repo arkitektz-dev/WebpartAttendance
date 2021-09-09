@@ -9,6 +9,7 @@ import {
 } from "@microsoft/sp-component-base";
 import {
   IPropertyPaneField,
+  PropertyPaneLabel,
   PropertyPaneSlider,
   PropertyPaneToggle,
   PropertyPaneDropdown,
@@ -97,7 +98,7 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
     const fileService = new FileService(this.context);
 
     const isFolderExist = await fileService.checkFolderExist(
-      ConfigurationFileInfo.fullPath
+      ConfigurationFileInfo.uploadPath
     );
 
     if (!isFolderExist) {
@@ -106,10 +107,6 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
 
     const isFileExist = await fileService.checkFileExist(
       ConfigurationFileInfo.fullPath
-    );
-
-    const isLogFileExist = await fileService.checkFileExist(
-      LogFileInfo.fullPath
     );
 
     if (!isFileExist) {
@@ -122,6 +119,7 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
       );
 
       await fileService.addFile(fileObj, ConfigurationFileInfo.uploadPath);
+
       this.properties.webpartConfiguration = WebpartConfiguration;
       this._webpartConfiguration = WebpartConfiguration;
     } else {
@@ -131,10 +129,15 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
       this._webpartConfiguration = file;
     }
 
+    const isLogFileExist = await fileService.checkFileExist(
+      LogFileInfo.fullPath
+    );
+
     if (!isLogFileExist) {
       const fileObj = new File([""], LogFileInfo.nameWithExt, {
         type: "text/plain",
       });
+
       await fileService.addFile(fileObj, ConfigurationFileInfo.uploadPath);
     }
 
@@ -352,10 +355,6 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
         this._webpartConfiguration.usersListTitleColumn;
       obj.usersListOfficeLocationCoordinatesColumn =
         this._webpartConfiguration.usersListOfficeLocationCoordinatesColumn;
-      obj.usersListOfficeLatitudeColumn =
-        this._webpartConfiguration.usersListOfficeLatitudeColumn;
-      obj.usersListOfficeLongitudeColumn =
-        this._webpartConfiguration.usersListOfficeLongitudeColumn;
     }
 
     if (
@@ -415,6 +414,18 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
           displayGroupsAsAccordion: true,
           groups: [
             {
+              groupName:
+                webPartStrings.PropertyPane.AttendanceSourceGroup.GroupName,
+              groupFields: this._getAttendanceSourceFields(),
+              isCollapsed: false,
+            },
+            {
+              groupName:
+                webPartStrings.PropertyPane.ConfigurationGroup.GroupName,
+              groupFields: this._getConfigurationFields(),
+              isCollapsed: true,
+            },
+            {
               groupName: webPartStrings.PropertyPane.SettingsGroup.GroupName,
               groupFields: this._getSettingsFields(),
               isCollapsed: true,
@@ -424,44 +435,108 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
               groupFields: this._getAppearanceFields(),
               isCollapsed: true,
             },
-            {
-              groupName:
-                webPartStrings.PropertyPane.AttendanceSourceGroup.GroupName,
-              groupFields: this._getAttendanceSourceFields(),
-              isCollapsed: true,
-            },
-            {
-              groupName:
-                webPartStrings.PropertyPane.ConfigurationGroup.GroupName,
-              groupFields: this._getConfigurationFields(),
-              isCollapsed: true,
-            },
           ],
         },
       ],
     };
   }
 
-  private _getSettingsFields(): IPropertyPaneField<any>[] {
-    const settingsFields: IPropertyPaneField<any>[] = [
-      PropertyPaneToggle("showDescription", {
+  private _getAttendanceSourceFields(): IPropertyPaneField<any>[] {
+    const attendanceSourceFields: IPropertyPaneField<any>[] = [
+      PropertyPaneChoiceGroup("attendanceListSourceConfigurationType", {
         label:
-          webPartStrings.PropertyPane.SettingsGroup.ShowDesriptionFieldLabel,
-        checked: this.properties.showDescription,
+          webPartStrings.PropertyPane.AttendanceSourceGroup.ConfigurationType,
+        options: [
+          {
+            key: ConfigurationTypeOptions.Recommended,
+            text: webPartStrings.PropertyPane.AttendanceSourceGroup
+              .ConfigurationTypeOptions.Recommended,
+          },
+          {
+            key: ConfigurationTypeOptions.Custom,
+            text: webPartStrings.PropertyPane.AttendanceSourceGroup
+              .ConfigurationTypeOptions.Custom,
+          },
+        ],
       }),
     ];
 
-    if (this.properties.showDescription) {
-      settingsFields.push(
-        PropertyPaneTextField("description", {
+    if (
+      this.properties.attendanceListSourceConfigurationType ===
+      ConfigurationTypeOptions.Custom
+    ) {
+      attendanceSourceFields.push(
+        PropertyFieldSitePicker("attendanceListSourceSite", {
           label:
-            webPartStrings.PropertyPane.SettingsGroup.DescriptionFieldLabel,
-          multiline: true,
+            webPartStrings.PropertyPane.AttendanceSourceGroup.SiteFieldLabel,
+          initialSites: this.properties.attendanceListSourceSite,
+          context: this.context,
+          deferredValidationTime: 500,
+          multiSelect: false,
+          onPropertyChange: this.onPropertyPaneFieldChanged,
+          properties: this.properties,
+          key: "attendanceSourceSiteFieldId",
         })
       );
+
+      if (this.properties.attendanceListSourceSite.length > 0) {
+        attendanceSourceFields.push(
+          new PropertyPaneAsyncDropdown("attendanceListName", {
+            label:
+              webPartStrings.PropertyPane.AttendanceSourceGroup.ListFieldLabel,
+            loadOptions: this.loadAttendanceSourceListOptions.bind(this),
+            onPropertyChange: this.onAsyncDropdownChange.bind(this),
+            selectedKey: this.properties.attendanceListName,
+          })
+        );
+      }
+
+      if (this.properties.attendanceListName) {
+        attendanceSourceFields.push(
+          new PropertyPaneAsyncDropdown("attendanceListUserColumn", {
+            label:
+              webPartStrings.PropertyPane.AttendanceSourceGroup
+                .UserColumnFieldLabel,
+            loadOptions: () =>
+              this.loadAttendanceSourceListColumnOptions("SP.FieldUser"),
+            onPropertyChange: this.onAsyncDropdownChange.bind(this),
+            selectedKey: this.properties.attendanceListUserColumn,
+          }),
+          PropertyPaneLabel("labelField1", {
+            text: "This is user column",
+            required: true,
+          }),
+          new PropertyPaneAsyncDropdown("attendanceListTimeinColumn", {
+            label:
+              webPartStrings.PropertyPane.AttendanceSourceGroup
+                .TimeinColumnFieldLabel,
+            loadOptions: () =>
+              this.loadAttendanceSourceListColumnOptions("SP.FieldDateTime"),
+            onPropertyChange: this.onAsyncDropdownChange.bind(this),
+            selectedKey: this.properties.attendanceListTimeinColumn,
+          }),
+          PropertyPaneLabel("labelField2", {
+            text: "This is time in column",
+            required: true,
+          }),
+          new PropertyPaneAsyncDropdown("attendanceListTimeoutColumn", {
+            label:
+              webPartStrings.PropertyPane.AttendanceSourceGroup
+                .TimeoutColumnFieldLabel,
+            loadOptions: () =>
+              this.loadAttendanceSourceListColumnOptions("SP.FieldDateTime"),
+            onPropertyChange: this.onAsyncDropdownChange.bind(this),
+            selectedKey: this.properties.attendanceListTimeoutColumn,
+          }),
+          PropertyPaneLabel("labelField3", {
+            text: "This is time out column",
+            required: true,
+          })
+        );
+      }
     }
 
-    return settingsFields;
+    return attendanceSourceFields;
   }
 
   private _getConfigurationFields(): IPropertyPaneField<any>[] {
@@ -479,10 +554,10 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
           key: "radius",
           label:
             webPartStrings.PropertyPane.ConfigurationGroup.RadiusFieldLabel,
-          // description: "Number field description",
+          description: "This field calculates the radius in meters",
           value: this.properties.radius,
           // maxValue: 10,
-          minValue: 1,
+          // minValue: 1,
           // disabled: false
         }),
         PropertyPaneChoiceGroup("usersListSourceConfigurationType", {
@@ -544,6 +619,10 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
               onPropertyChange: this.onAsyncDropdownChange.bind(this),
               selectedKey: this.properties.usersListTitleColumn,
             }),
+            PropertyPaneLabel("labelField4", {
+              text: "This is user column",
+              required: true,
+            }),
             new PropertyPaneAsyncDropdown(
               "usersListOfficeLocationCoordinatesColumn",
               {
@@ -556,13 +635,39 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
                 selectedKey:
                   this.properties.usersListOfficeLocationCoordinatesColumn,
               }
-            )
+            ),
+            PropertyPaneLabel("labelField5", {
+              text: "This is office location column",
+              required: true,
+            })
           );
         }
       }
     }
 
     return configurationFields;
+  }
+
+  private _getSettingsFields(): IPropertyPaneField<any>[] {
+    const settingsFields: IPropertyPaneField<any>[] = [
+      PropertyPaneToggle("showDescription", {
+        label:
+          webPartStrings.PropertyPane.SettingsGroup.ShowDesriptionFieldLabel,
+        checked: this.properties.showDescription,
+      }),
+    ];
+
+    if (this.properties.showDescription) {
+      settingsFields.push(
+        PropertyPaneTextField("description", {
+          label:
+            webPartStrings.PropertyPane.SettingsGroup.DescriptionFieldLabel,
+          multiline: true,
+        })
+      );
+    }
+
+    return settingsFields;
   }
 
   private _getAppearanceFields(): IPropertyPaneField<any>[] {
@@ -686,92 +791,6 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
     }
 
     return appearanceFields;
-  }
-
-  private _getAttendanceSourceFields(): IPropertyPaneField<any>[] {
-    const attendanceSourceFields: IPropertyPaneField<any>[] = [
-      PropertyPaneChoiceGroup("attendanceListSourceConfigurationType", {
-        label:
-          webPartStrings.PropertyPane.AttendanceSourceGroup.ConfigurationType,
-        options: [
-          {
-            key: ConfigurationTypeOptions.Recommended,
-            text: webPartStrings.PropertyPane.AttendanceSourceGroup
-              .ConfigurationTypeOptions.Recommended,
-          },
-          {
-            key: ConfigurationTypeOptions.Custom,
-            text: webPartStrings.PropertyPane.AttendanceSourceGroup
-              .ConfigurationTypeOptions.Custom,
-          },
-        ],
-      }),
-    ];
-
-    if (
-      this.properties.attendanceListSourceConfigurationType ===
-      ConfigurationTypeOptions.Custom
-    ) {
-      attendanceSourceFields.push(
-        PropertyFieldSitePicker("attendanceListSourceSite", {
-          label:
-            webPartStrings.PropertyPane.AttendanceSourceGroup.SiteFieldLabel,
-          initialSites: this.properties.attendanceListSourceSite,
-          context: this.context,
-          deferredValidationTime: 500,
-          multiSelect: false,
-          onPropertyChange: this.onPropertyPaneFieldChanged,
-          properties: this.properties,
-          key: "attendanceSourceSiteFieldId",
-        })
-      );
-
-      if (this.properties.attendanceListSourceSite.length > 0) {
-        attendanceSourceFields.push(
-          new PropertyPaneAsyncDropdown("attendanceListName", {
-            label:
-              webPartStrings.PropertyPane.AttendanceSourceGroup.ListFieldLabel,
-            loadOptions: this.loadAttendanceSourceListOptions.bind(this),
-            onPropertyChange: this.onAsyncDropdownChange.bind(this),
-            selectedKey: this.properties.attendanceListName,
-          })
-        );
-      }
-
-      if (this.properties.attendanceListName) {
-        attendanceSourceFields.push(
-          new PropertyPaneAsyncDropdown("attendanceListUserColumn", {
-            label:
-              webPartStrings.PropertyPane.AttendanceSourceGroup
-                .UserColumnFieldLabel,
-            loadOptions: () =>
-              this.loadAttendanceSourceListColumnOptions("SP.FieldUser"),
-            onPropertyChange: this.onAsyncDropdownChange.bind(this),
-            selectedKey: this.properties.attendanceListUserColumn,
-          }),
-          new PropertyPaneAsyncDropdown("attendanceListTimeinColumn", {
-            label:
-              webPartStrings.PropertyPane.AttendanceSourceGroup
-                .TimeinColumnFieldLabel,
-            loadOptions: () =>
-              this.loadAttendanceSourceListColumnOptions("SP.FieldDateTime"),
-            onPropertyChange: this.onAsyncDropdownChange.bind(this),
-            selectedKey: this.properties.attendanceListTimeinColumn,
-          }),
-          new PropertyPaneAsyncDropdown("attendanceListTimeoutColumn", {
-            label:
-              webPartStrings.PropertyPane.AttendanceSourceGroup
-                .TimeoutColumnFieldLabel,
-            loadOptions: () =>
-              this.loadAttendanceSourceListColumnOptions("SP.FieldDateTime"),
-            onPropertyChange: this.onAsyncDropdownChange.bind(this),
-            selectedKey: this.properties.attendanceListTimeoutColumn,
-          })
-        );
-      }
-    }
-
-    return attendanceSourceFields;
   }
 
   private _handleThemeChangedEvent(args: ThemeChangedEventArgs): void {

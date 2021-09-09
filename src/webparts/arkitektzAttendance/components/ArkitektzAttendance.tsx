@@ -1,16 +1,14 @@
 import * as React from "react";
 import styles from "./ArkitektzAttendance.module.scss";
 import { IArkitektzAttendanceProps } from "./IArkitektzAttendanceProps";
-import { escape } from "@microsoft/sp-lodash-subset";
 import { MessageBar, MessageBarType } from "office-ui-fabric-react";
-import SiteService from "../../../services/SiteService";
 import FileService from "../../../services/FileService";
 import ListService from "../../../services/ListService";
 import UserService from "../../../services/UserService";
 import Text from "./Text/Text";
 import Button from "./Button/Button";
 import { LocationLabelOptions, StatusOptions } from "../../../models/Options";
-import { to12HourFormat, toISOString } from "./../../../utils/dateUtils";
+import { toISOString } from "./../../../utils/dateUtils";
 import {
   calculateDistance,
   getCurrentCoordinates,
@@ -18,7 +16,6 @@ import {
 import { IAttendanceListItem } from "../../../models/IAttendanceListItem";
 import { IGeoLocation } from "./../../../models/IGeoLocation";
 import { Placeholder } from "@pnp/spfx-controls-react/lib/Placeholder";
-import { IUser } from "./../../../models/IUser";
 import { LogFileInfo } from "../../../config/config";
 
 export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
@@ -48,49 +45,51 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
   const [item, setItem] = React.useState<IAttendanceListItem>(null);
   const [loading, setLoading] = React.useState<boolean>(false);
   const [error, setError] = React.useState<string>(null);
-  const [user, setUser] = React.useState<IUser>(null);
+  const [locationError, setLocationError] = React.useState<string>(null);
+  const [userOfficeLocation, setUserOfficeLocation] = React.useState(null);
 
   const listService = new ListService(context);
   const userService = new UserService(context);
   const fileService = new FileService(context);
 
-  const getButtonLayoutClass = () => {
-    return showDescription ? styles.columnButton : styles.columnOnlyButton;
-  };
-
   const onTimein = async () => {
     if (!error) {
       setLoading(true);
+
       const currentUser = await userService.getCurrentUserByEmail(
         webpartConfiguration.attendanceListSiteURL
       );
+
       const attendanceListItem: IAttendanceListItem = {
         userId: currentUser.Id,
         timein: toISOString(new Date()),
       };
 
-      let locationLabel: string = "";
-      if (useGeoLocation && user) {
+      if (useGeoLocation && userOfficeLocation) {
         const currentCoordinates: IGeoLocation = await getCurrentCoordinates();
         const { distance }: IGeoLocation = calculateDistance({
           latitude1: currentCoordinates.latitude,
           longitude1: currentCoordinates.longitude,
-          latitude2: user.officeLocationCoordinates.latitude,
-          longitude2: user.officeLocationCoordinates.longitude,
+          latitude2: userOfficeLocation.latitude,
+          longitude2: userOfficeLocation.longitude,
         });
-        console.log(distance);
+
         attendanceListItem.locationCoordinates = `${currentCoordinates.latitude}, ${currentCoordinates.longitude}`;
-        locationLabel =
+        attendanceListItem.locationLabel =
           distance > props.radius
             ? LocationLabelOptions.Remotely
             : LocationLabelOptions.Office;
         setError(null);
       } else {
-        locationLabel = webpartConfiguration.noLocationLabel;
+        if (!useGeoLocation) {
+          attendanceListItem.locationLabel =
+            webpartConfiguration.noLocationLabel;
+        } else if (!userOfficeLocation) {
+          attendanceListItem.locationLabel = webpartConfiguration.noOfficeLabel;
+        }
       }
-      attendanceListItem.locationLabel = locationLabel;
 
-      const { entity, error } = await listService.saveListItem(
+      const { entity, errorDetails } = await listService.saveListItem(
         webpartConfiguration,
         attendanceListItem
       );
@@ -99,8 +98,11 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
         setItem(entity);
         setError(null);
       } else {
-        setError(error);
-        await fileService.appendContentInFile(error, LogFileInfo.fullPath);
+        setError(errorDetails.clientMessage);
+        await fileService.updateLogFileContent(
+          errorDetails.errorObj,
+          LogFileInfo.fullPath
+        );
       }
 
       setLoading(false);
@@ -116,7 +118,7 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
       timein: item.timein,
     };
 
-    const { entity, error } = await listService.updateListItem(
+    const { entity, errorDetails } = await listService.updateListItem(
       webpartConfiguration,
       attendanceListItem
     );
@@ -126,8 +128,11 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
       setItem(null);
       setError(null);
     } else {
-      setError(error);
-      await fileService.appendContentInFile(error, LogFileInfo.fullPath);
+      setError(errorDetails.clientMessage);
+      await fileService.updateLogFileContent(
+        errorDetails.errorObj,
+        LogFileInfo.fullPath
+      );
     }
 
     setLoading(false);
@@ -143,10 +148,11 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
 
   const getAttendance = async () => {
     setLoading(true);
-    const { entity, error } = await listService.getAttendanceListItems(
+
+    const { entity, errorDetails } = await listService.getAttendanceListItems(
       webpartConfiguration
     );
-    if (!entity && !error) {
+    if (!entity && !errorDetails) {
       setError(null);
     }
     if (entity) {
@@ -154,29 +160,48 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
       setItem(entity);
       setError(null);
     }
-    if (error) {
-      setError(error);
-      await fileService.appendContentInFile(error, LogFileInfo.fullPath);
+    if (errorDetails) {
+      setError(errorDetails.clientMessage);
+      await fileService.updateLogFileContent(
+        errorDetails.errorObj,
+        LogFileInfo.fullPath
+      );
     }
+
     setLoading(false);
   };
 
-  const getUser = async () => {
-    const { entity, error } = await listService.getUserListItems(
+  const getUserOfficeLocation = async () => {
+    setLoading(true);
+
+    const { entity, errorDetails } = await listService.getUserListItems(
       webpartConfiguration
     );
-    if (entity) {
-      setUser(entity);
-      setError(null);
-    } else {
-      setError(error);
-      await fileService.appendContentInFile(error, LogFileInfo.fullPath);
+    if (!entity && !errorDetails) {
+      setLocationError(null);
     }
+
+    if (entity) {
+      setUserOfficeLocation(entity.officeLocationCoordinates);
+      setLocationError(null);
+    }
+    if (errorDetails) {
+      setLocationError(errorDetails.clientMessage);
+      await fileService.updateLogFileContent(
+        errorDetails.errorObj,
+        LogFileInfo.fullPath
+      );
+    }
+
     setLoading(false);
   };
 
   const _onConfigure = () => {
     props.context.propertyPane.open();
+  };
+
+  const getButtonLayoutClass = () => {
+    return showDescription ? styles.columnButton : styles.columnOnlyButton;
   };
 
   React.useEffect(() => {
@@ -194,7 +219,9 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
 
   React.useEffect(() => {
     if (useGeoLocation) {
-      getUser();
+      getUserOfficeLocation();
+    } else {
+      setLocationError(null);
     }
   }, [
     useGeoLocation,
@@ -204,10 +231,6 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
     usersListTitleColumn,
     usersListOfficeLocationCoordinatesColumn,
   ]);
-
-  React.useEffect(() => {
-    console.log(status, item, loading, "state");
-  }, [status, item, loading]);
 
   if (!attendanceListSourceConfigurationType) {
     return (
@@ -233,6 +256,11 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
           {error && (
             <MessageBar messageBarType={MessageBarType.error}>
               {error}
+            </MessageBar>
+          )}
+          {!error && locationError && (
+            <MessageBar messageBarType={MessageBarType.error}>
+              {locationError}
             </MessageBar>
           )}
           <br />

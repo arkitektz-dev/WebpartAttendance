@@ -17,7 +17,7 @@ define([], function () {
         RadiusFieldLabel: "Radius",
         SiteFieldLabel: "Select Site",
         ListFieldLabel: "Select List",
-        UserColumnFieldLabel: "User Column",
+        UserColumnFieldLabel: "User",
         OfficeLocationCoordinatesColumnFieldLabel: "Office Location",
       },
       AppearanceGroup: {
@@ -57,9 +57,9 @@ define([], function () {
         },
         SiteFieldLabel: "Select Site",
         ListFieldLabel: "Select List",
-        UserColumnFieldLabel: "User Column",
-        TimeinColumnFieldLabel: "Timein Column",
-        TimeoutColumnFieldLabel: "Timeout Column",
+        UserColumnFieldLabel: "User",
+        TimeinColumnFieldLabel: "Time-in",
+        TimeoutColumnFieldLabel: "Time-out",
       },
     },
   };
