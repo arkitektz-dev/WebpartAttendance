@@ -7,7 +7,7 @@ define([], function () {
         DescriptionFieldLabel: "Desription",
       },
       ConfigurationGroup: {
-        GroupName: "Configuration",
+        GroupName: "Location Configuration",
         ConfigurationType: "Configuration Type",
         ConfigurationTypeOptions: {
           Recommended: "Recommended",
@@ -35,7 +35,7 @@ define([], function () {
           AlignmentOptions: {
             Left: "Left",
             Center: "Center",
-            Right: "Right"
+            Right: "Right",
           },
           IconPlacementFieldLabel: "Icon Placement",
           IconPlacementOptions: {
@@ -49,7 +49,7 @@ define([], function () {
         },
       },
       AttendanceSourceGroup: {
-        GroupName: "Attendance Source",
+        GroupName: "Attendance Configuration",
         ConfigurationType: "Configuration Type",
         ConfigurationTypeOptions: {
           Recommended: "Recommended",

@@ -18,6 +18,8 @@ import { IGeoLocation } from "./../../../models/IGeoLocation";
 import { Placeholder } from "@pnp/spfx-controls-react/lib/Placeholder";
 import { LogFileInfo } from "../../../config/config";
 
+import layoutStyles from "./Layout2.module.scss";
+
 export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
   const {
     webpartConfiguration,
@@ -286,6 +288,56 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
                 }}
                 onButtonClick={onButtonClick}
               />
+            </div>
+          </div>
+        </div>
+        <div className={layoutStyles.layout}>
+          <div className={layoutStyles.container}>
+            <div className={layoutStyles.card}>
+              <div className={layoutStyles.cardBody}>
+                <h5 className={layoutStyles.cardTitle}>
+                  Timesheet <small>11 Mar 2019</small>
+                </h5>
+                <div className={layoutStyles.punchDet}>
+                  <h6>Punch In at</h6>
+                  <p>Wed, 11th Mar 2019 10.00 AM</p>
+                </div>
+                <div className={layoutStyles.punchInfo}>
+                  <div className={layoutStyles.punchHours}>
+                    <span>3.45 hrs</span>
+                  </div>
+                </div>
+                <div className={layoutStyles.punchBtnSection}>
+                  {/* <button>Punch Out</button> */}
+                  <Button
+                    label={buttonText}
+                    timein={item ? item.timein : ""}
+                    status={status}
+                    loading={loading}
+                    uiOptions={{
+                      appearance: props.buttonAppearance,
+                      borderRadius: props.buttonBorderRadius,
+                      alignment: props.buttonAlignment,
+                      iconPlacement: props.iconPlacement,
+                      selectedIcon: props.selectedIcon,
+                    }}
+                    onButtonClick={onButtonClick}
+                  />
+                </div>
+
+                {/* <div className={layoutStyles.stats}>
+                  <div className={layoutStyles.statsContainer}>
+                    <div className={layoutStyles.statsBox}>
+                      <p>Break</p>
+                      <h6>1.21 hrs</h6>
+                    </div>
+                    <div className={layoutStyles.statsBox}>
+                      <p>Overtime</p>
+                      <h6>3 hrs</h6>
+                    </div>
+                  </div>
+                </div> */}
+              </div>
             </div>
           </div>
         </div>
