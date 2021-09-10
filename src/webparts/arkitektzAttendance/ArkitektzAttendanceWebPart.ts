@@ -761,27 +761,6 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
         ],
         selectedKey: this.properties.iconPlacement,
       }),
-      PropertyPaneChoiceGroup("layout", {
-        label: webPartStrings.PropertyPane.AppearanceGroup.LayoutFieldLabel,
-        options: [
-          {
-            key: webPartStrings.PropertyPane.AppearanceGroup.LayoutOptions
-              .Layout1,
-            text: webPartStrings.PropertyPane.AppearanceGroup.LayoutOptions
-              .Layout1,
-            selectedImageSrc: layout1Svg,
-            imageSrc: layout1Svg,
-          },
-          {
-            key: webPartStrings.PropertyPane.AppearanceGroup.LayoutOptions
-              .Layout2,
-            text: webPartStrings.PropertyPane.AppearanceGroup.LayoutOptions
-              .Layout2,
-            selectedImageSrc: layout2Svg,
-            imageSrc: layout2Svg,
-          },
-        ],
-      }),
     ];
 
     if (this.properties.iconPlacement === IconPlacementOptions.OnlyIcon) {
@@ -818,6 +797,30 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
         })
       );
     }
+
+    appearanceFields.push(
+      PropertyPaneChoiceGroup("layout", {
+        label: webPartStrings.PropertyPane.AppearanceGroup.LayoutFieldLabel,
+        options: [
+          {
+            key: webPartStrings.PropertyPane.AppearanceGroup.LayoutOptions
+              .Layout1,
+            text: webPartStrings.PropertyPane.AppearanceGroup.LayoutOptions
+              .Layout1,
+            selectedImageSrc: layout1Svg,
+            imageSrc: layout1Svg,
+          },
+          {
+            key: webPartStrings.PropertyPane.AppearanceGroup.LayoutOptions
+              .Layout2,
+            text: webPartStrings.PropertyPane.AppearanceGroup.LayoutOptions
+              .Layout2,
+            selectedImageSrc: layout2Svg,
+            imageSrc: layout2Svg,
+          },
+        ],
+      })
+    );
 
     return appearanceFields;
   }

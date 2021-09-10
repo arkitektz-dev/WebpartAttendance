@@ -312,7 +312,7 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
                   </h5>
                   {item && (
                     <div className={layoutStyles.punchDet}>
-                      <h6>Punch In at</h6>
+                      <h6>{`${buttonText.split(",")[0]}`} at</h6>
                       <p>
                         {`${moment(item ? item.timein : "").format(
                           "dd, Do MMM YYYY h:mm A"
