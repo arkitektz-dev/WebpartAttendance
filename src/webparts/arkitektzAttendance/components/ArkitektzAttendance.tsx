@@ -5,7 +5,6 @@ import { IArkitektzAttendanceProps } from "./IArkitektzAttendanceProps";
 import FileService from "../../../services/FileService";
 import ListService from "../../../services/ListService";
 import UserService from "../../../services/UserService";
-import Text from "./Text/Text";
 import Button from "./Button/Button";
 import {
   LocationLabelOptions,
@@ -21,7 +20,7 @@ import { IAttendanceListItem } from "../../../models/IAttendanceListItem";
 import { IGeoLocation } from "./../../../models/IGeoLocation";
 import { Placeholder } from "@pnp/spfx-controls-react/lib/Placeholder";
 import { LogFileInfo } from "../../../config/config";
-import { Template2 } from "../components/Templates";
+import { Template1, Template2 } from "../components/Templates";
 
 import styles from "./ArkitektzAttendance.module.scss";
 
@@ -210,8 +209,56 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
     props.context.propertyPane.open();
   };
 
-  const getButtonLayoutClass = () => {
-    return showDescription ? styles.columnButton : styles.columnOnlyButton;
+  const getTemplate = () => {
+    switch (layout) {
+      case LayoutOptions.Layout1:
+        return (
+          <Template1
+            showDescription={showDescription}
+            themeVariant={props.themeVariant}
+            description={description}
+          >
+            <Button
+              label={buttonText}
+              timein={item ? item.timein : ""}
+              status={status}
+              loading={loading}
+              uiOptions={{
+                appearance: props.buttonAppearance,
+                borderRadius: props.buttonBorderRadius,
+                alignment: props.buttonAlignment,
+                iconPlacement: props.iconPlacement,
+                selectedIcon: props.selectedIcon,
+              }}
+              onButtonClick={onButtonClick}
+              layout={layout}
+            />
+          </Template1>
+        );
+      case LayoutOptions.Layout2:
+        return (
+          <Template2 item={item} buttonText={buttonText}>
+            <Button
+              label={buttonText}
+              timein={item ? item.timein : ""}
+              status={status}
+              loading={loading}
+              uiOptions={{
+                appearance: props.buttonAppearance,
+                borderRadius: props.buttonBorderRadius,
+                alignment: props.buttonAlignment,
+                iconPlacement: props.iconPlacement,
+                selectedIcon: props.selectedIcon,
+              }}
+              onButtonClick={onButtonClick}
+              layout={layout}
+            />
+          </Template2>
+        );
+
+      default:
+        return null;
+    }
   };
 
   React.useEffect(() => {
@@ -272,58 +319,7 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
           )}
           <br />
         </>
-        {layout === LayoutOptions.Layout1 ? (
-          <div
-            className={styles.row}
-            style={{
-              backgroundColor: props.themeVariant.semanticColors.bodyBackground,
-            }}
-          >
-            {showDescription && (
-              <div className={styles.columnText}>
-                <Text description={description} />
-              </div>
-            )}
-
-            <div className={getButtonLayoutClass()}>
-              <div className={styles.row}>
-                <Button
-                  label={buttonText}
-                  timein={item ? item.timein : ""}
-                  status={status}
-                  loading={loading}
-                  uiOptions={{
-                    appearance: props.buttonAppearance,
-                    borderRadius: props.buttonBorderRadius,
-                    alignment: props.buttonAlignment,
-                    iconPlacement: props.iconPlacement,
-                    selectedIcon: props.selectedIcon,
-                  }}
-                  onButtonClick={onButtonClick}
-                  layout={layout}
-                />
-              </div>
-            </div>
-          </div>
-        ) : (
-          <Template2 item={item} buttonText={buttonText}>
-            <Button
-              label={buttonText}
-              timein={item ? item.timein : ""}
-              status={status}
-              loading={loading}
-              uiOptions={{
-                appearance: props.buttonAppearance,
-                borderRadius: props.buttonBorderRadius,
-                alignment: props.buttonAlignment,
-                iconPlacement: props.iconPlacement,
-                selectedIcon: props.selectedIcon,
-              }}
-              onButtonClick={onButtonClick}
-              layout={layout}
-            />
-          </Template2>
-        )}
+        {getTemplate()}
       </div>
     </div>
   );

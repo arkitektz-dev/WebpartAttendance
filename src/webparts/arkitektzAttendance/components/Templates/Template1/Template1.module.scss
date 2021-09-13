@@ -1,0 +1,21 @@
+@import "~office-ui-fabric-react/dist/sass/References.scss";
+
+.row {
+  @include ms-Grid-row;
+}
+
+.columnText {
+  @include ms-Grid-col;
+  @include ms-md8;
+  @include ms-sm12;
+}
+
+.columnButton {
+  @include ms-Grid-col;
+  @include ms-md4;
+  @include ms-sm12;
+}
+
+.columnOnlyButton {
+  @include ms-sm12;
+}

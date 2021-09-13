@@ -1,9 +1,6 @@
-export interface ITemplate1Props {
-  //appearance
+import { IAttendanceListItem } from "../../../../../models/IAttendanceListItem";
+export interface ITemplate2Props {
+  item: IAttendanceListItem;
   buttonText: string;
-  buttonAppearance: string;
-  buttonBorderRadius: number;
-  buttonAlignment: string;
-  iconPlacement: string;
-  selectedIcon: string;
+  children: any;
 }

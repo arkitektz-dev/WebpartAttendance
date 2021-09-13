@@ -1,9 +1,13 @@
 import * as React from "react";
 import * as moment from "moment";
 
+import { ITemplate2Props } from "./ITemplate2Props";
+
 import layoutStyles from "./Template2.module.scss";
 
-const Template1 = ({ item, buttonText, children }) => {
+const Template1 = (props: ITemplate2Props) => {
+  const { item, buttonText, children } = props;
+
   return (
     <div className={layoutStyles.layout}>
       <div className={layoutStyles.container}>
