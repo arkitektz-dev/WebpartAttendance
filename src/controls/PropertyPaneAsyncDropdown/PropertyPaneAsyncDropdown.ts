@@ -32,6 +32,7 @@ export class PropertyPaneAsyncDropdown
       disabled: properties.disabled,
       onRender: this.onRender.bind(this),
       onDispose: this.onDispose.bind(this),
+      helpText: properties.helpText,
     };
   }
 
@@ -61,6 +62,7 @@ export class PropertyPaneAsyncDropdown
         disabled: this.properties.disabled,
         // required to allow the component to be re-rendered by calling this.render() externally
         stateKey: new Date().toString(),
+        helpText: this.properties.helpText,
       });
     ReactDom.render(element, elem);
   }

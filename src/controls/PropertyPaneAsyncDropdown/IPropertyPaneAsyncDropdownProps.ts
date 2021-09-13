@@ -6,4 +6,5 @@ export interface IPropertyPaneAsyncDropdownProps {
   onPropertyChange: (propertyPath: string, newValue: any) => void;
   selectedKey: string | number;
   disabled?: boolean;
+  helpText?: string;
 }

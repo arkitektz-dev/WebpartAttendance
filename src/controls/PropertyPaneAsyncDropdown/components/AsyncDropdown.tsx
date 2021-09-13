@@ -7,6 +7,7 @@ import { Spinner } from "office-ui-fabric-react/lib/components/Spinner";
 import { IAsyncDropdownProps } from "./IAsyncDropdownProps";
 import { IAsyncDropdownState } from "./IAsyncDropdownState";
 
+import styles from "./AsyncDropdown.module.scss";
 export default class AsyncDropdown extends React.Component<
   IAsyncDropdownProps,
   IAsyncDropdownState
@@ -101,6 +102,11 @@ export default class AsyncDropdown extends React.Component<
           options={this.state.options}
         />
         {/* {loading} */}
+        {this.props.helpText && (
+          <div className={styles.helpText}>
+            <span>{this.props.helpText}</span>
+          </div>
+        )}
         {error}
       </div>
     );

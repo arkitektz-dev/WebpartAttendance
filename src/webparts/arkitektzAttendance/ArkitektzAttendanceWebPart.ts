@@ -521,11 +521,9 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
               this.loadAttendanceSourceListColumnOptions("SP.FieldUser"),
             onPropertyChange: this.onAsyncDropdownChange.bind(this),
             selectedKey: this.properties.attendanceListUserColumn,
+            helpText: "This is user column",
           }),
-          PropertyPaneLabel("labelField1", {
-            text: "This is user column",
-            required: true,
-          }),
+
           new PropertyPaneAsyncDropdown("attendanceListTimeinColumn", {
             label:
               webPartStrings.PropertyPane.AttendanceSourceGroup
@@ -534,11 +532,9 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
               this.loadAttendanceSourceListColumnOptions("SP.FieldDateTime"),
             onPropertyChange: this.onAsyncDropdownChange.bind(this),
             selectedKey: this.properties.attendanceListTimeinColumn,
+            helpText: "This is time in column",
           }),
-          PropertyPaneLabel("labelField2", {
-            text: "This is time in column",
-            required: true,
-          }),
+
           new PropertyPaneAsyncDropdown("attendanceListTimeoutColumn", {
             label:
               webPartStrings.PropertyPane.AttendanceSourceGroup
@@ -547,10 +543,7 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
               this.loadAttendanceSourceListColumnOptions("SP.FieldDateTime"),
             onPropertyChange: this.onAsyncDropdownChange.bind(this),
             selectedKey: this.properties.attendanceListTimeoutColumn,
-          }),
-          PropertyPaneLabel("labelField3", {
-            text: "This is time out column",
-            required: true,
+            helpText: "This is time out column",
           }),
 
           new PropertyPaneAsyncDropdown("attendanceListLocationLabelColumn", {
@@ -561,10 +554,7 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
               this.loadAttendanceSourceListColumnOptions("SP.FieldText"),
             onPropertyChange: this.onAsyncDropdownChange.bind(this),
             selectedKey: this.properties.attendanceListLocationLabelColumn,
-          }),
-          PropertyPaneLabel("labelField4", {
-            text: "This is from column",
-            required: true,
+            helpText: "This is from column",
           }),
 
           new PropertyPaneAsyncDropdown(
@@ -578,12 +568,9 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
               onPropertyChange: this.onAsyncDropdownChange.bind(this),
               selectedKey:
                 this.properties.attendanceListLocationCoordinatesColumn,
+              helpText: "This is office-coordinates column",
             }
-          ),
-          PropertyPaneLabel("labelField5", {
-            text: "This is office-coordinates column",
-            required: true,
-          })
+          )
         );
       }
     }
