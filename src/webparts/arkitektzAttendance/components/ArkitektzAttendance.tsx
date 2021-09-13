@@ -1,5 +1,6 @@
 import * as React from "react";
 import { MessageBar, MessageBarType } from "office-ui-fabric-react";
+import { Placeholder } from "@pnp/spfx-controls-react/lib/Placeholder";
 
 import { IArkitektzAttendanceProps } from "./IArkitektzAttendanceProps";
 import FileService from "../../../services/FileService";
@@ -18,7 +19,6 @@ import {
 } from "./../../../utils/geoLocationUtils";
 import { IAttendanceListItem } from "../../../models/IAttendanceListItem";
 import { IGeoLocation } from "./../../../models/IGeoLocation";
-import { Placeholder } from "@pnp/spfx-controls-react/lib/Placeholder";
 import { LogFileInfo } from "../../../config/config";
 import { Template1, Template2 } from "../components/Templates";
 
