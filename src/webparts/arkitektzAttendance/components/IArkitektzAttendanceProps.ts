@@ -38,7 +38,8 @@ export interface IArkitektzAttendanceProps {
   attendanceListUserColumn: string;
   attendanceListTimeinColumn: string;
   attendanceListTimeoutColumn: string;
-
+  attendanceListLocationCoordinatesColumn: string;
+  attendanceListLocationLabelColumn: string;
   //theme
   themeVariant: IReadonlyTheme | undefined;
 }

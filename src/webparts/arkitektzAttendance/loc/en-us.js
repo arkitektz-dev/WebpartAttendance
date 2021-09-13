@@ -65,6 +65,8 @@ define([], function () {
         UserColumnFieldLabel: "User",
         TimeinColumnFieldLabel: "Time-in",
         TimeoutColumnFieldLabel: "Time-out",
+        LocationLabelColumnFieldLabel: "From",
+        LocationCoordinatesColumnFieldLabel: "Location",
       },
     },
   };

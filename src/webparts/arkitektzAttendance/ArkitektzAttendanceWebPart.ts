@@ -83,6 +83,8 @@ export interface IArkitektzAttendanceWebPartProps {
   attendanceListUserColumn: string;
   attendanceListTimeinColumn: string;
   attendanceListTimeoutColumn: string;
+  attendanceListLocationCoordinatesColumn: string;
+  attendanceListLocationLabelColumn: string;
 }
 
 export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IArkitektzAttendanceWebPartProps> {
@@ -186,6 +188,11 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
         attendanceListTimeinColumn: this.properties.attendanceListTimeinColumn,
         attendanceListTimeoutColumn:
           this.properties.attendanceListTimeoutColumn,
+        attendanceListLocationCoordinatesColumn:
+          this.properties.attendanceListLocationCoordinatesColumn,
+        attendanceListLocationLabelColumn:
+          this.properties.attendanceListLocationLabelColumn,
+
         //theme
         themeVariant: this._themeVariant,
       });
@@ -377,6 +384,11 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
         this.properties.attendanceListTimeinColumn;
       obj.attendanceListTimeoutColumn =
         this.properties.attendanceListTimeoutColumn;
+
+      obj.attendanceListLocationCoordinatesColumn =
+        this.properties.attendanceListLocationCoordinatesColumn;
+      obj.attendanceListLocationLabelColumn =
+        this.properties.attendanceListLocationLabelColumn;
     } else {
       obj.attendanceListSiteURL =
         this._webpartConfiguration.attendanceListSiteURL;
@@ -387,12 +399,12 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
         this._webpartConfiguration.attendanceListTimeinColumn;
       obj.attendanceListTimeoutColumn =
         this._webpartConfiguration.attendanceListTimeoutColumn;
+      obj.attendanceListLocationCoordinatesColumn =
+        this._webpartConfiguration.attendanceListLocationCoordinatesColumn;
+      obj.attendanceListLocationLabelColumn =
+        this._webpartConfiguration.attendanceListLocationLabelColumn;
     }
 
-    obj.attendanceListLocationCoordinatesColumn =
-      this._webpartConfiguration.attendanceListLocationCoordinatesColumn;
-    obj.attendanceListLocationLabelColumn =
-      this._webpartConfiguration.attendanceListLocationLabelColumn;
     obj.noLocationLabel = this._webpartConfiguration.noLocationLabel;
     obj.noOfficeLabel = this._webpartConfiguration.noOfficeLabel;
 
@@ -538,6 +550,38 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
           }),
           PropertyPaneLabel("labelField3", {
             text: "This is time out column",
+            required: true,
+          }),
+
+          new PropertyPaneAsyncDropdown("attendanceListLocationLabelColumn", {
+            label:
+              webPartStrings.PropertyPane.AttendanceSourceGroup
+                .LocationLabelColumnFieldLabel,
+            loadOptions: () =>
+              this.loadAttendanceSourceListColumnOptions("SP.FieldText"),
+            onPropertyChange: this.onAsyncDropdownChange.bind(this),
+            selectedKey: this.properties.attendanceListLocationLabelColumn,
+          }),
+          PropertyPaneLabel("labelField4", {
+            text: "This is from column",
+            required: true,
+          }),
+
+          new PropertyPaneAsyncDropdown(
+            "attendanceListLocationCoordinatesColumn",
+            {
+              label:
+                webPartStrings.PropertyPane.AttendanceSourceGroup
+                  .LocationCoordinatesColumnFieldLabel,
+              loadOptions: () =>
+                this.loadAttendanceSourceListColumnOptions("SP.FieldText"),
+              onPropertyChange: this.onAsyncDropdownChange.bind(this),
+              selectedKey:
+                this.properties.attendanceListLocationCoordinatesColumn,
+            }
+          ),
+          PropertyPaneLabel("labelField5", {
+            text: "This is office-coordinates column",
             required: true,
           })
         );

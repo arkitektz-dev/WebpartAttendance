@@ -101,6 +101,8 @@ export class ListService {
       attendanceListUserColumn,
       attendanceListTimeinColumn,
       attendanceListTimeoutColumn,
+      attendanceListLocationLabelColumn,
+      attendanceListLocationCoordinatesColumn,
     } = webpartConfiguration;
     try {
       const web = Web(attendanceListSiteURL);
@@ -109,6 +111,8 @@ export class ListService {
         "Id",
         attendanceListTimeinColumn,
         attendanceListTimeoutColumn,
+        attendanceListLocationLabelColumn,
+        attendanceListLocationCoordinatesColumn,
         `${attendanceListUserColumn}/Title`,
         `${attendanceListUserColumn}/EMail`,
       ];

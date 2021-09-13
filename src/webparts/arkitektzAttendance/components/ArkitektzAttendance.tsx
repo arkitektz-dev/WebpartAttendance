@@ -1,8 +1,7 @@
 import * as React from "react";
-import * as moment from "moment";
-import styles from "./ArkitektzAttendance.module.scss";
-import { IArkitektzAttendanceProps } from "./IArkitektzAttendanceProps";
 import { MessageBar, MessageBarType } from "office-ui-fabric-react";
+
+import { IArkitektzAttendanceProps } from "./IArkitektzAttendanceProps";
 import FileService from "../../../services/FileService";
 import ListService from "../../../services/ListService";
 import UserService from "../../../services/UserService";
@@ -22,8 +21,9 @@ import { IAttendanceListItem } from "../../../models/IAttendanceListItem";
 import { IGeoLocation } from "./../../../models/IGeoLocation";
 import { Placeholder } from "@pnp/spfx-controls-react/lib/Placeholder";
 import { LogFileInfo } from "../../../config/config";
+import { Template2 } from "../components/Templates";
 
-import layoutStyles from "./Layout2.module.scss";
+import styles from "./ArkitektzAttendance.module.scss";
 
 export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
   const {
@@ -39,6 +39,8 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
     attendanceListUserColumn,
     attendanceListTimeinColumn,
     attendanceListTimeoutColumn,
+    attendanceListLocationCoordinatesColumn,
+    attendanceListLocationLabelColumn,
     usersListSourceConfigurationType,
     usersListSourceSite,
     usersListName,
@@ -223,6 +225,8 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
     attendanceListUserColumn,
     attendanceListTimeinColumn,
     attendanceListTimeoutColumn,
+    attendanceListLocationCoordinatesColumn,
+    attendanceListLocationLabelColumn,
   ]);
 
   React.useEffect(() => {
@@ -255,6 +259,19 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
   return (
     <div className={styles.arkitektzAttendance}>
       <div className={styles.container}>
+        <>
+          {error && (
+            <MessageBar messageBarType={MessageBarType.error}>
+              {error}
+            </MessageBar>
+          )}
+          {!error && locationError && (
+            <MessageBar messageBarType={MessageBarType.error}>
+              {locationError}
+            </MessageBar>
+          )}
+          <br />
+        </>
         {layout === LayoutOptions.Layout1 ? (
           <div
             className={styles.row}
@@ -262,17 +279,6 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
               backgroundColor: props.themeVariant.semanticColors.bodyBackground,
             }}
           >
-            {error && (
-              <MessageBar messageBarType={MessageBarType.error}>
-                {error}
-              </MessageBar>
-            )}
-            {!error && locationError && (
-              <MessageBar messageBarType={MessageBarType.error}>
-                {locationError}
-              </MessageBar>
-            )}
-            <br />
             {showDescription && (
               <div className={styles.columnText}>
                 <Text description={description} />
@@ -300,65 +306,23 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
             </div>
           </div>
         ) : (
-          <div className={layoutStyles.layout}>
-            <div className={layoutStyles.container}>
-              <div className={layoutStyles.card}>
-                <div className={layoutStyles.cardBody}>
-                  <h5 className={layoutStyles.cardTitle}>
-                    Timesheet
-                    <small>
-                      {`${moment(new Date()).format("Do MMM YYYY")} `}
-                    </small>
-                  </h5>
-                  {item && (
-                    <div className={layoutStyles.punchDet}>
-                      <h6>{`${buttonText.split(",")[0]}`} at</h6>
-                      <p>
-                        {`${moment(item ? item.timein : "").format(
-                          "dd, Do MMM YYYY h:mm A"
-                        )}`}
-                      </p>
-                    </div>
-                  )}
-                  <div className={layoutStyles.punchInfo}>
-                    <div className={layoutStyles.punchHours}>
-                      <span>{`${moment(new Date()).format("dddd")}`}</span>
-                    </div>
-                  </div>
-                  <div className={layoutStyles.punchBtnSection}>
-                    <Button
-                      label={buttonText}
-                      timein={item ? item.timein : ""}
-                      status={status}
-                      loading={loading}
-                      uiOptions={{
-                        appearance: props.buttonAppearance,
-                        borderRadius: props.buttonBorderRadius,
-                        alignment: props.buttonAlignment,
-                        iconPlacement: props.iconPlacement,
-                        selectedIcon: props.selectedIcon,
-                      }}
-                      onButtonClick={onButtonClick}
-                      layout={layout}
-                    />
-                  </div>
-
-                  {/* <div className={layoutStyles.stats}>
-                  <div className={layoutStyles.statsContainer}>
-                    <div className={layoutStyles.statsBox}>
-                      <p>Break</p>
-                      <h6>1.21 hrs</h6>
-                    </div>
-                    <div className={layoutStyles.statsBox}>
-                      <p>Overtime</p>
-                      <h6>3 hrs</h6>
-                    </div>
-                  </div>
-                </div> */}
-                </div>
-              </div>
-            </div>
-          </div>
+          <Template2 item={item} buttonText={buttonText}>
+            <Button
+              label={buttonText}
+              timein={item ? item.timein : ""}
+              status={status}
+              loading={loading}
+              uiOptions={{
+                appearance: props.buttonAppearance,
+                borderRadius: props.buttonBorderRadius,
+                alignment: props.buttonAlignment,
+                iconPlacement: props.iconPlacement,
+                selectedIcon: props.selectedIcon,
+              }}
+              onButtonClick={onButtonClick}
+              layout={layout}
+            />
+          </Template2>
         )}
       </div>
     </div>
