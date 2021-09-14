@@ -18,6 +18,7 @@ define([], function () {
         SiteFieldLabel: "Select Site",
         ListFieldLabel: "Select List",
         UserColumnFieldLabel: "User",
+        OfficeLookupFieldLabel: "Lookup Field For Office",
         OfficeLocationCoordinatesColumnFieldLabel: "Office Location",
       },
       AppearanceGroup: {

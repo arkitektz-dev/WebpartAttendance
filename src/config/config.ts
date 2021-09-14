@@ -20,6 +20,8 @@ export const WebpartConfiguration = {
   usersListSiteURL: "https://abczxc.sharepoint.com/",
   usersListName: "Users",
   usersListTitleColumn: "User",
+  isOfficeLookupField: true,
+  officeLookup: "LookupOffice/Location",
   usersListOfficeLocationCoordinatesColumn: "Location",
 
   attendanceListSiteURL: "https://abczxc.sharepoint.com/",

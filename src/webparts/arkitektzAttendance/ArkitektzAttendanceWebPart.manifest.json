@@ -35,7 +35,8 @@
 
         //Configuration
         "useGeoLocation": false,
-        "radius": 0
+        "radius": 0,
+        "isOfficeLookupField": false
       }
     }
   ]

@@ -20,6 +20,7 @@ export interface IArkitektzAttendanceProps {
   usersListSourceSite: IPropertyFieldSite[];
   usersListName: string;
   usersListTitleColumn: string;
+  isOfficeLookupField: boolean;
   usersListOfficeLocationCoordinatesColumn: string;
   layout: string;
 

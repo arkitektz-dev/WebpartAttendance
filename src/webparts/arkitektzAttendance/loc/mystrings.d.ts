@@ -17,6 +17,7 @@ declare interface IArkitektzAttendanceWebPartStrings {
       SiteFieldLabel: string;
       ListFieldLabel: string;
       UserColumnFieldLabel: string;
+      OfficeLookupFieldLabel: string;
       OfficeLocationCoordinatesColumnFieldLabel: string;
     };
     AppearanceGroup: {

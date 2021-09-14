@@ -63,6 +63,7 @@ export interface IArkitektzAttendanceWebPartProps {
   usersListSourceSite: IPropertyFieldSite[];
   usersListName: string;
   usersListTitleColumn: string;
+  isOfficeLookupField: boolean;
   usersListOfficeLocationCoordinatesColumn: string;
   usersListOfficeLatitudeColumn: string;
   usersListOfficeLongitudeColumn: string;
@@ -169,6 +170,7 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
         usersListSourceSite: this.properties.usersListSourceSite,
         usersListName: this.properties.usersListName,
         usersListTitleColumn: this.properties.usersListTitleColumn,
+        isOfficeLookupField: this.properties.isOfficeLookupField,
         usersListOfficeLocationCoordinatesColumn:
           this.properties.usersListOfficeLocationCoordinatesColumn,
         layout: this.properties.layout,
@@ -310,12 +312,45 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
     const listTitle = this.properties.usersListName;
     const listService = new ListService(this.context);
     const result = await listService.getListColumns(siteUrl, listTitle);
+
     const listColumnOptions: IDropdownOption[] = result
       .filter((item) => item.type === fieldType)
       .map((item) => ({
         key: item.internalName,
         text: item.title,
       }));
+
+    return new Promise<IDropdownOption[]>(
+      (
+        resolve: (options: IDropdownOption[]) => void,
+        reject: (error: any) => void
+      ) => {
+        resolve(listColumnOptions);
+      }
+    );
+  }
+
+  private async loadConfigurationListLookupColumnOptions(
+    fieldType: string
+  ): Promise<IDropdownOption[]> {
+    const siteUrl = this.properties.usersListSourceSite[0].url;
+    const listTitle = this.properties.usersListName;
+    const listService = new ListService(this.context);
+    const result = await listService.getListColumns(siteUrl, listTitle);
+
+    const listColumnOptions: IDropdownOption[] = result
+      .filter((item) => item.type === fieldType)
+      .map((item) => {
+        const value = item.dependentLookupInternalNames.map(
+          (dependentCol, i) => {
+            return dependentCol;
+          }
+        );
+        return {
+          key: value[0],
+          text: value[0].replace("_x003a_", ":"),
+        };
+      });
 
     return new Promise<IDropdownOption[]>(
       (
@@ -359,6 +394,7 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
       obj.usersListTitleColumn = this.properties.usersListTitleColumn;
       obj.usersListOfficeLocationCoordinatesColumn =
         this.properties.usersListOfficeLocationCoordinatesColumn;
+      obj.isOfficeLookupField = this.properties.isOfficeLookupField;
       obj.usersListOfficeLatitudeColumn =
         this.properties.usersListOfficeLatitudeColumn;
       obj.usersListOfficeLongitudeColumn =
@@ -368,6 +404,7 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
       obj.usersListName = this._webpartConfiguration.usersListName;
       obj.usersListTitleColumn =
         this._webpartConfiguration.usersListTitleColumn;
+      obj.isOfficeLookupField = this._webpartConfiguration.isOfficeLookupField;
       obj.usersListOfficeLocationCoordinatesColumn =
         this._webpartConfiguration.usersListOfficeLocationCoordinatesColumn;
     }
@@ -422,6 +459,11 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
     }
 
     if (propertyPath === "usersListSourceConfigurationType") {
+      this.properties.webpartConfiguration =
+        this._makeWebpartConfigurationObject();
+    }
+
+    if (propertyPath === "isOfficeLookupField") {
       this.properties.webpartConfiguration =
         this._makeWebpartConfigurationObject();
     }
@@ -657,11 +699,16 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
                 this.loadConfigurationListColumnOptions("SP.FieldUser"),
               onPropertyChange: this.onAsyncDropdownChange.bind(this),
               selectedKey: this.properties.usersListTitleColumn,
+              helpText: "This is user column",
             }),
-            PropertyPaneLabel("labelField4", {
-              text: "This is user column",
-              required: true,
+
+            PropertyPaneToggle("isOfficeLookupField", {
+              label:
+                webPartStrings.PropertyPane.ConfigurationGroup
+                  .OfficeLookupFieldLabel,
+              checked: this.properties.showDescription,
             }),
+
             new PropertyPaneAsyncDropdown(
               "usersListOfficeLocationCoordinatesColumn",
               {
@@ -669,16 +716,26 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
                   webPartStrings.PropertyPane.ConfigurationGroup
                     .OfficeLocationCoordinatesColumnFieldLabel,
                 loadOptions: () =>
-                  this.loadConfigurationListColumnOptions("SP.FieldText"),
+                  this.properties.isOfficeLookupField
+                    ? this.loadConfigurationListLookupColumnOptions(
+                        "SP.FieldLookup"
+                      )
+                    : this.loadConfigurationListColumnOptions("SP.FieldText"),
                 onPropertyChange: this.onAsyncDropdownChange.bind(this),
                 selectedKey:
                   this.properties.usersListOfficeLocationCoordinatesColumn,
+                helpText: "This is office location column",
               }
-            ),
-            PropertyPaneLabel("labelField5", {
-              text: "This is office location column",
-              required: true,
-            })
+            )
+
+            // new PropertyPaneAsyncDropdown("officeLookupLocationColumn", {
+            //   label: "Office Location ",
+            //   loadOptions: () =>
+            //     this.loadConfigurationListLookupColumnOptions("SP.FieldLookup"),
+            //   onPropertyChange: this.onAsyncDropdownChange.bind(this),
+            //   selectedKey: this.properties.usersListTitleColumn,
+            //   helpText: "This is user Office Lookup Location Column",
+            // })
           );
         }
       }
@@ -715,6 +772,7 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
         label:
           webPartStrings.PropertyPane.AppearanceGroup.ButtonConfiguration
             .TextFieldLabel,
+        description: "This is button text",
       }),
 
       PropertyPaneDropdown("buttonAppearance", {
@@ -745,6 +803,7 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
         label:
           webPartStrings.PropertyPane.AppearanceGroup.ButtonConfiguration
             .AlignmentFieldLabel,
+
         options: [
           {
             key: ButtonAlignmentOptions.Left,

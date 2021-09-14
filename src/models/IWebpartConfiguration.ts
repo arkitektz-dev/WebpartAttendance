@@ -2,6 +2,7 @@ export interface IWebpartConfiguration {
   usersListSiteURL: string;
   usersListName: string;
   usersListTitleColumn: string;
+  isOfficeLookupField: boolean;
   usersListOfficeLocationCoordinatesColumn: string;
 
   attendanceListSiteURL: string;

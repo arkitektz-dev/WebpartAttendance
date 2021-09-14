@@ -38,6 +38,7 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
     attendanceListUserColumn,
     attendanceListTimeinColumn,
     attendanceListTimeoutColumn,
+    isOfficeLookupField,
     attendanceListLocationCoordinatesColumn,
     attendanceListLocationLabelColumn,
     usersListSourceConfigurationType,
@@ -289,6 +290,7 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
     usersListName,
     usersListTitleColumn,
     usersListOfficeLocationCoordinatesColumn,
+    isOfficeLookupField,
   ]);
 
   if (!attendanceListSourceConfigurationType) {

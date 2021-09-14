@@ -68,14 +68,13 @@ export class ListService {
         .filter(filterstring)
         .get();
 
-      // console.log(fields);
-
       listColumns = fields.map((item) => {
         const listColumn: IListColumn = {} as IListColumn;
-
         listColumn.title = item["Title"];
         listColumn.internalName = item["InternalName"];
         listColumn.type = item["odata.type"];
+        listColumn.dependentLookupInternalNames =
+          item["DependentLookupInternalNames"];
 
         return listColumn;
       });
@@ -173,16 +172,27 @@ export class ListService {
       usersListName,
       usersListTitleColumn,
       usersListOfficeLocationCoordinatesColumn,
+      isOfficeLookupField,
     } = webpartConfiguration;
 
     try {
       const web = Web(usersListSiteURL);
       let filterstring = `${usersListTitleColumn}/EMail eq '${this._currentUser}'`;
-      let toSelect: string[] = [
-        `${usersListTitleColumn}/EMail`,
-        usersListOfficeLocationCoordinatesColumn,
-      ];
+      let toSelect: string[] = [`${usersListTitleColumn}/EMail`];
+      if (isOfficeLookupField) {
+        toSelect.push(
+          `${usersListOfficeLocationCoordinatesColumn.replace("_x003a_", "/")}`
+        );
+      } else {
+        toSelect.push(usersListOfficeLocationCoordinatesColumn);
+      }
+
       let toExpand: string[] = [usersListTitleColumn];
+      if (isOfficeLookupField) {
+        toExpand.push(
+          usersListOfficeLocationCoordinatesColumn.split("_x003a_")[0]
+        );
+      }
 
       const response = await web.lists
         .getByTitle(usersListName)
@@ -191,7 +201,6 @@ export class ListService {
         .filter(filterstring)
         .get()
         .then((res) => {
-          // console.log(res);
           if (res.length === 0)
             return {
               entity: null,
@@ -204,8 +213,11 @@ export class ListService {
           };
 
           if (res[0][usersListOfficeLocationCoordinatesColumn]) {
-            const officeLocationCoordinates =
-              res[0][usersListOfficeLocationCoordinatesColumn].split(",");
+            const officeLocationCoordinates = isOfficeLookupField
+              ? res[0][usersListOfficeLocationCoordinatesColumn][
+                  "Location"
+                ].split(",")
+              : res[0][usersListOfficeLocationCoordinatesColumn].split(",");
 
             if (officeLocationCoordinates.length === 2) {
               user.officeLocationCoordinates = {
