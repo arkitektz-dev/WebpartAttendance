@@ -5,4 +5,5 @@ export interface IAttendanceListItem {
   timeout?: string;
   locationCoordinates?: string;
   locationLabel?: string;
+  currentWorkingHours?: string;
 }

@@ -12,7 +12,10 @@ import {
   StatusOptions,
   LayoutOptions,
 } from "../../../models/Options";
-import { toISOString } from "./../../../utils/dateUtils";
+import {
+  getCurrentWorkingHours,
+  toISOString,
+} from "./../../../utils/dateUtils";
 import {
   calculateDistance,
   getCurrentCoordinates,
@@ -105,7 +108,10 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
       );
       if (entity) {
         setStatus(StatusOptions.Timeout);
-        setItem(entity);
+        setItem({
+          ...entity,
+          currentWorkingHours: getCurrentWorkingHours(entity.timein),
+        });
         setError(null);
       } else {
         setError(errorDetails.clientMessage);
@@ -167,7 +173,10 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
     }
     if (entity) {
       setStatus(StatusOptions.Timeout);
-      setItem(entity);
+      setItem({
+        ...entity,
+        currentWorkingHours: getCurrentWorkingHours(entity.timein),
+      });
       setError(null);
     }
     if (errorDetails) {

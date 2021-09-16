@@ -4,9 +4,25 @@ import * as moment from "moment";
 import { ITemplate2Props } from "./ITemplate2Props";
 
 import layoutStyles from "./Template2.module.scss";
+import { getCurrentWorkingHours } from "../../../../../utils/dateUtils";
 
 const Template1 = (props: ITemplate2Props) => {
   const { item, buttonText, children } = props;
+
+  const [currentWorkingHours, setCurrentWorkingHours] = React.useState("");
+
+  React.useEffect(() => {
+    if (item) {
+      setCurrentWorkingHours(item.currentWorkingHours);
+      const timeInterval = setInterval(() => {
+        setCurrentWorkingHours(getCurrentWorkingHours(item.timein));
+      }, 60000);
+      return () => {
+        console.log("clear");
+        clearInterval(timeInterval);
+      };
+    }
+  }, [item]);
 
   return (
     <div className={layoutStyles.layout}>
@@ -26,7 +42,7 @@ const Template1 = (props: ITemplate2Props) => {
             )}
             <div className={layoutStyles.punchInfo}>
               <div className={layoutStyles.punchHours}>
-                <span>{`${moment(new Date()).format("dddd")}`}</span>
+                <span>{currentWorkingHours}</span>
               </div>
             </div>
             <div className={layoutStyles.punchBtnSection}>
