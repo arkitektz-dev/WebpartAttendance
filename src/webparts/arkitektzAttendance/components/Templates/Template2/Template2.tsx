@@ -42,7 +42,7 @@ const Template1 = (props: ITemplate2Props) => {
             )}
             <div className={layoutStyles.punchInfo}>
               <div className={layoutStyles.punchHours}>
-                <span>{item ? currentWorkingHours : "0:0"}</span>
+                <span>{item ? currentWorkingHours : "00:00"}</span>
               </div>
             </div>
             <div className={layoutStyles.punchBtnSection}>
