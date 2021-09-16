@@ -24,6 +24,11 @@ const Template1 = (props: ITemplate2Props) => {
     }
   }, [item]);
 
+  const checkInDate = `${buttonText.split(",")[0]} at - ${moment(
+    new Date()
+  ).format("dddd, Do MMMM YYYY")} `;
+  const checkInTime = `${moment(item?.timein).format("h:mm A")}`;
+
   return (
     <div className={layoutStyles.layout}>
       <div className={layoutStyles.container}>
@@ -31,18 +36,13 @@ const Template1 = (props: ITemplate2Props) => {
           <div className={layoutStyles.cardBody}>
             {item && (
               <p className={layoutStyles.cardTitle}>
-                {`${buttonText.split(",")[0]}`} at -
-                <span className={layoutStyles.checkInDate}>{`${moment(
-                  new Date()
-                ).format("dddd, Do MMMM YYYY")} `}</span>
-                <span className={layoutStyles.checkInTime}>{`${moment(
-                  item.timein
-                ).format("h:mm A")}`}</span>
+                <span className={layoutStyles.checkInDate}>{checkInDate}</span>
+                <span className={layoutStyles.checkInTime}>{checkInTime}</span>
               </p>
             )}
             <div className={layoutStyles.punchInfo}>
               <div className={layoutStyles.punchHours}>
-                <span>{currentWorkingHours}</span>
+                <span>{item ? currentWorkingHours : "0:0"}</span>
               </div>
             </div>
             <div className={layoutStyles.punchBtnSection}>

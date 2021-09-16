@@ -35,8 +35,9 @@ export function calculateDistance(coordinates): IGeoLocation {
       (1 - c((longitude2 - longitude1) * p))) /
       2;
   const distance = 12742 * Math.asin(Math.sqrt(a)); // R = 6371 km; 2 * R = 12742;
+  const distanceInMeters = Math.round(distance * 1000);
   const geoLocation = {
-    distance,
+    distance: distanceInMeters,
   } as IGeoLocation;
 
   return geoLocation;

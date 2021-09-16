@@ -25,7 +25,7 @@ export function getCurrentWorkingHours(startTime: string) {
   if (hours < 1) {
     return `${minutes < 10 ? "0" : ""}${minutes.toFixed(0)} mins`;
   } else if (hours > 1) {
-    return `${hours.toFixed(1)} hrs`;
+    return `${hours < 10 ? "0" : ""}${hours.toFixed(1)} hrs`;
   } else {
     return "";
   }
