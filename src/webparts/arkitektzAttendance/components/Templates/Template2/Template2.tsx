@@ -7,7 +7,7 @@ import layoutStyles from "./Template2.module.scss";
 import { getCurrentWorkingHours } from "../../../../../utils/dateUtils";
 
 const Template1 = (props: ITemplate2Props) => {
-  const { item, buttonText, children } = props;
+  const { item, buttonText, children, description } = props;
 
   const [currentWorkingHours, setCurrentWorkingHours] = React.useState("");
 
@@ -24,21 +24,20 @@ const Template1 = (props: ITemplate2Props) => {
     }
   }, [item]);
 
-  const checkInDate = `${buttonText.split(",")[0]} at - ${moment(
-    new Date()
-  ).format("dddd, Do MMMM YYYY")} `;
-  const checkInTime = `${moment(item?.timein).format("h:mm A")}`;
+  const checkInDate = item
+    ? `${moment(new Date()).format("ddd, Do MMM YYYY")} `
+    : "N/A";
+  const checkInTime = item ? `${moment(item.timein).format("h:mm A")}` : "";
 
   return (
     <div className={layoutStyles.layout}>
       <div className={layoutStyles.container}>
         <div className={layoutStyles.card}>
           <div className={layoutStyles.cardBody}>
-            {item && (
-              <p className={layoutStyles.cardTitle}>
-                <span className={layoutStyles.checkInDate}>{checkInDate}</span>
-                <span className={layoutStyles.checkInTime}>{checkInTime}</span>
-              </p>
+            {description && (
+              <div>
+                <p>{description}</p>
+              </div>
             )}
             <div className={layoutStyles.punchInfo}>
               <div className={layoutStyles.punchHours}>
@@ -47,21 +46,6 @@ const Template1 = (props: ITemplate2Props) => {
             </div>
             <div className={layoutStyles.punchBtnSection}>
               {children}
-              {/* <Button
-                      label={buttonText}
-                      timein={item ? item.timein : ""}
-                      status={status}
-                      loading={loading}
-                      uiOptions={{
-                        appearance: props.buttonAppearance,
-                        borderRadius: props.buttonBorderRadius,
-                        alignment: props.buttonAlignment,
-                        iconPlacement: props.iconPlacement,
-                        selectedIcon: props.selectedIcon,
-                      }}
-                      onButtonClick={onButtonClick}
-                      layout={layout}
-                    /> */}
               {/* <div className={layoutStyles.stats}>
                   <div className={layoutStyles.statsContainer}>
                     <div className={layoutStyles.statsBox}>
@@ -74,6 +58,16 @@ const Template1 = (props: ITemplate2Props) => {
                     </div>
                   </div>
                 </div> */}
+              {item && (
+                <div className={layoutStyles.cardFooter}>
+                  <span className={layoutStyles.checkInDate}>{`${
+                    buttonText.split(",")[0]
+                  } at - ${checkInDate}`}</span>
+                  <span className={layoutStyles.checkInTime}>
+                    {checkInTime}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
         </div>

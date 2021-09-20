@@ -6,19 +6,6 @@
       border-radius: 0.25rem;
       .cardBody {
         padding: 1.25rem;
-        .cardTitle {
-          color: "[theme: bodyText, default: #0078d7]";
-
-          margin-bottom: 20px;
-          margin-top: 0;
-          .checkInDate {
-            word-spacing: 1px;
-            margin-left: 10px;
-          }
-          .checkInTime {
-            color: "[theme: primaryButtonBackground, default: #0078d7]" !important;
-          }
-        }
         .punchInfo {
           margin-bottom: 20px;
           .punchHours {
@@ -61,6 +48,18 @@
                 margin: 0 !important;
               }
             }
+          }
+        }
+        .cardFooter {
+          padding-top: 20px;
+          color: "[theme: bodyText, default: #0078d7]";
+          font-size: "[theme: mediumFontSize, default: 14px]";
+          text-align: left;
+          .checkInDate {
+            word-spacing: 1px;
+          }
+          .checkInTime {
+            color: "[theme: primaryButtonBackground, default: #0078d7]" !important;
           }
         }
       }

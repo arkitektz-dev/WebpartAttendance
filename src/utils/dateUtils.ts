@@ -20,13 +20,13 @@ export function getCurrentWorkingHours(startTime: string) {
       moment(new Date(startTime), "HH:mm:ss a")
     )
   );
-  const hours = duration.asHours();
-  const minutes = duration.asMinutes();
-  if (hours < 1) {
-    return `${minutes < 10 ? "0" : ""}${minutes.toFixed(0)} mins`;
-  } else if (hours > 1) {
-    return `${hours < 10 ? "0" : ""}${hours.toFixed(1)} hrs`;
-  } else {
-    return "";
-  }
+
+  const hours = duration.hours();
+  const minutes = duration.minutes();
+
+  const formattedHours = `${hours < 10 ? "0" : ""}${hours}`;
+  const formattedMinutes = `${minutes < 10 ? "0" : ""}${minutes}`;
+  const formattedDuration = `${formattedHours}:${formattedMinutes}`;
+
+  return formattedDuration;
 }

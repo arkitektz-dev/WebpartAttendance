@@ -247,7 +247,11 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
         );
       case LayoutOptions.Layout2:
         return (
-          <Template2 item={item} buttonText={buttonText}>
+          <Template2
+            item={item}
+            buttonText={buttonText}
+            description={showDescription && description}
+          >
             <Button
               label={buttonText}
               timein={item ? item.timein : ""}
