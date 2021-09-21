@@ -24,10 +24,8 @@ const Template1 = (props: ITemplate2Props) => {
     }
   }, [item]);
 
-  const checkInDate = item
-    ? `${moment(new Date()).format("ddd, Do MMM YYYY")} `
-    : "N/A";
-  const checkInTime = item ? `${moment(item.timein).format("h:mm A")}` : "";
+  const checkInDate = `${moment(new Date()).format("ddd, Do MMM YYYY")} `;
+  const checkInTime = `${moment(item.timein).format("h:mm A")}`;
 
   return (
     <div className={layoutStyles.layout}>
