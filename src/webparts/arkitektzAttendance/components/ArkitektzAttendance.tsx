@@ -6,6 +6,7 @@ import { IArkitektzAttendanceProps } from "./IArkitektzAttendanceProps";
 import FileService from "../../../services/FileService";
 import ListService from "../../../services/ListService";
 import UserService from "../../../services/UserService";
+import ApiService from "../../../services/ApiService";
 import Button from "./Button/Button";
 import {
   LocationLabelOptions,
@@ -41,6 +42,7 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
     attendanceListUserColumn,
     attendanceListTimeinColumn,
     attendanceListTimeoutColumn,
+    attendanceListPayCodeColumn,
     isOfficeLookupField,
     attendanceListLocationCoordinatesColumn,
     attendanceListLocationLabelColumn,
@@ -64,10 +66,15 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
   const listService = new ListService(context);
   const userService = new UserService(context);
   const fileService = new FileService(context);
+  const apiService = new ApiService();
 
   const onTimein = async () => {
     if (!error) {
       setLoading(true);
+
+      const utcRes = await apiService.getUniversalDateTime();
+
+      console.log(utcRes);
 
       const currentUser = await userService.getCurrentUserByEmail(
         webpartConfiguration.attendanceListSiteURL
@@ -75,7 +82,7 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
 
       const attendanceListItem: IAttendanceListItem = {
         userId: currentUser.Id,
-        timein: toISOString(new Date()),
+        timein: toISOString(utcRes),
       };
 
       if (useGeoLocation && userOfficeLocation) {
@@ -110,7 +117,7 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
         setStatus(StatusOptions.Timeout);
         setItem({
           ...entity,
-          currentWorkingHours: getCurrentWorkingHours(entity.timein),
+          currentWorkingHours: getCurrentWorkingHours(utcRes, entity.timein),
         });
         setError(null);
       } else {
@@ -128,9 +135,11 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
   const onTimeout = async () => {
     setLoading(true);
 
+    const utcRes = await apiService.getUniversalDateTime();
+
     const attendanceListItem: IAttendanceListItem = {
       id: item.id,
-      timeout: toISOString(new Date()),
+      timeout: toISOString(utcRes),
       timein: item.timein,
     };
 
@@ -165,6 +174,8 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
   const getAttendance = async () => {
     setLoading(true);
 
+    const utcRes = await apiService.getUniversalDateTime();
+
     const { entity, errorDetails } = await listService.getAttendanceListItems(
       webpartConfiguration
     );
@@ -175,7 +186,7 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
       setStatus(StatusOptions.Timeout);
       setItem({
         ...entity,
-        currentWorkingHours: getCurrentWorkingHours(entity.timein),
+        currentWorkingHours: getCurrentWorkingHours(utcRes, entity.timein),
       });
       setError(null);
     }
@@ -288,6 +299,7 @@ export default function ArkitektzAttendance(props: IArkitektzAttendanceProps) {
     attendanceListTimeoutColumn,
     attendanceListLocationCoordinatesColumn,
     attendanceListLocationLabelColumn,
+    attendanceListPayCodeColumn,
   ]);
 
   React.useEffect(() => {

@@ -9,7 +9,6 @@ import {
 } from "@microsoft/sp-component-base";
 import {
   IPropertyPaneField,
-  PropertyPaneLabel,
   PropertyPaneSlider,
   PropertyPaneToggle,
   PropertyPaneDropdown,
@@ -45,6 +44,11 @@ import {
   WebpartConfiguration,
   LogFileInfo,
 } from "./../../config/config";
+
+import { sp } from "@pnp/sp";
+import "@pnp/sp/webs";
+import "@pnp/sp/regional-settings/web";
+import { Web } from "@pnp/sp/webs";
 
 const layout1Svg: string = require("./components/assets/layout1.svg");
 const layout2Svg: string = require("./components/assets/layout2.svg");
@@ -86,6 +90,7 @@ export interface IArkitektzAttendanceWebPartProps {
   attendanceListTimeoutColumn: string;
   attendanceListLocationCoordinatesColumn: string;
   attendanceListLocationLabelColumn: string;
+  attendanceListPayCodeColumn: string;
 }
 
 export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IArkitektzAttendanceWebPartProps> {
@@ -194,7 +199,8 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
           this.properties.attendanceListLocationCoordinatesColumn,
         attendanceListLocationLabelColumn:
           this.properties.attendanceListLocationLabelColumn,
-
+        attendanceListPayCodeColumn:
+          this.properties.attendanceListPayCodeColumn,
         //theme
         themeVariant: this._themeVariant,
       });
@@ -426,6 +432,8 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
         this.properties.attendanceListLocationCoordinatesColumn;
       obj.attendanceListLocationLabelColumn =
         this.properties.attendanceListLocationLabelColumn;
+      obj.attendanceListPayCodeColumn =
+        this.properties.attendanceListPayCodeColumn;
     } else {
       obj.attendanceListSiteURL =
         this._webpartConfiguration.attendanceListSiteURL;
@@ -440,6 +448,8 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
         this._webpartConfiguration.attendanceListLocationCoordinatesColumn;
       obj.attendanceListLocationLabelColumn =
         this._webpartConfiguration.attendanceListLocationLabelColumn;
+      obj.attendanceListPayCodeColumn =
+        this._webpartConfiguration.attendanceListPayCodeColumn;
     }
 
     obj.noLocationLabel = this._webpartConfiguration.noLocationLabel;
@@ -612,7 +622,18 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
                 this.properties.attendanceListLocationCoordinatesColumn,
               helpText: "This is office-coordinates column",
             }
-          )
+          ),
+
+          new PropertyPaneAsyncDropdown("attendanceListPayCodeColumn", {
+            label:
+              webPartStrings.PropertyPane.AttendanceSourceGroup
+                .PayCodeColumnFieldLabel,
+            loadOptions: () =>
+              this.loadAttendanceSourceListColumnOptions("SP.FieldLookup"),
+            onPropertyChange: this.onAsyncDropdownChange.bind(this),
+            selectedKey: this.properties.attendanceListPayCodeColumn,
+            helpText: "This is pay code column",
+          })
         );
       }
     }

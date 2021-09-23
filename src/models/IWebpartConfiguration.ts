@@ -12,6 +12,7 @@ export interface IWebpartConfiguration {
   attendanceListTimeoutColumn: string;
   attendanceListLocationCoordinatesColumn: string;
   attendanceListLocationLabelColumn: string;
+  attendanceListPayCodeColumn: string;
 
   noLocationLabel: string;
   noOfficeLabel: string;

@@ -67,6 +67,7 @@ declare interface IArkitektzAttendanceWebPartStrings {
       TimeoutColumnFieldLabel: string;
       LocationLabelColumnFieldLabel: string;
       LocationCoordinatesColumnFieldLabel: string;
+      PayCodeColumnFieldLabel: string;
     };
   };
 }

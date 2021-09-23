@@ -112,6 +112,7 @@ export class ListService {
         attendanceListTimeoutColumn,
         attendanceListLocationLabelColumn,
         attendanceListLocationCoordinatesColumn,
+
         `${attendanceListUserColumn}/Title`,
         `${attendanceListUserColumn}/EMail`,
       ];
@@ -268,6 +269,7 @@ export class ListService {
       attendanceListTimeoutColumn,
       attendanceListLocationCoordinatesColumn,
       attendanceListLocationLabelColumn,
+      attendanceListPayCodeColumn,
     } = webpartConfiguration;
     const { userId, timein, locationCoordinates, locationLabel } =
       attendanceListItem;
@@ -279,6 +281,7 @@ export class ListService {
       [attendanceListTimeinColumn]: timein,
       [attendanceListLocationCoordinatesColumn]: locationCoordinates,
       [attendanceListLocationLabelColumn]: locationLabel,
+      [attendanceListPayCodeColumn + "Id"]: 3,
     };
 
     const response = await web.lists

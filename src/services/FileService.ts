@@ -4,7 +4,7 @@ import "@pnp/sp/webs";
 import "@pnp/sp/files";
 import "@pnp/sp/folders";
 
-export class FileService {
+class FileService {
   private _web: IWeb = null;
   private _currentUser: string = null;
   private serverRelativeUrl: string = null;

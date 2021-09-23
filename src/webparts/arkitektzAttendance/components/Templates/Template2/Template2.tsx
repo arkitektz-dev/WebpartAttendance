@@ -2,20 +2,24 @@ import * as React from "react";
 import * as moment from "moment";
 
 import { ITemplate2Props } from "./ITemplate2Props";
+import { getCurrentWorkingHours } from "../../../../../utils/dateUtils";
+import ApiService from "../../../../../services/ApiService";
 
 import layoutStyles from "./Template2.module.scss";
-import { getCurrentWorkingHours } from "../../../../../utils/dateUtils";
 
 const Template1 = (props: ITemplate2Props) => {
   const { item, buttonText, children, description } = props;
 
-  const [currentWorkingHours, setCurrentWorkingHours] = React.useState("");
+  const apiService = new ApiService();
+
+  const [currentWorkingHours, setCurrentWorkingHours] = React.useState(null);
 
   React.useEffect(() => {
     if (item) {
       setCurrentWorkingHours(item.currentWorkingHours);
-      const timeInterval = setInterval(() => {
-        setCurrentWorkingHours(getCurrentWorkingHours(item.timein));
+      const timeInterval = setInterval(async () => {
+        const utcRes = await apiService.getUniversalDateTime();
+        setCurrentWorkingHours(getCurrentWorkingHours(utcRes, item.timein));
       }, 60000);
       return () => {
         console.log("clear");
@@ -25,7 +29,7 @@ const Template1 = (props: ITemplate2Props) => {
   }, [item]);
 
   const checkInDate = `${moment(new Date()).format("ddd, Do MMM YYYY")} `;
-  const checkInTime = `${moment(item.timein).format("h:mm A")}`;
+  const checkInTime = `${moment(item?.timein).format("h:mm A")}`;
 
   return (
     <div className={layoutStyles.layout}>
@@ -39,7 +43,9 @@ const Template1 = (props: ITemplate2Props) => {
             )}
             <div className={layoutStyles.punchInfo}>
               <div className={layoutStyles.punchHours}>
-                <span>{item ? currentWorkingHours : "00:00"}</span>
+                <span>
+                  {item && currentWorkingHours ? currentWorkingHours : "00:00"}
+                </span>
               </div>
             </div>
             <div className={layoutStyles.punchBtnSection}>

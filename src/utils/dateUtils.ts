@@ -1,7 +1,7 @@
 import * as moment from "moment";
 
-export function toISOString(date: Date) {
-  return date.toISOString();
+export function toISOString(date: string) {
+  return moment(date).toISOString();
 }
 
 export function to12HourFormat(dateString: string) {
@@ -14,9 +14,9 @@ export function to12HourFormat(dateString: string) {
   });
 }
 
-export function getCurrentWorkingHours(startTime: string) {
+export function getCurrentWorkingHours(currentUtc: string, startTime: string) {
   const duration = moment.duration(
-    moment(new Date(), "HH:mm:ss a").diff(
+    moment(new Date(currentUtc), "HH:mm:ss a").diff(
       moment(new Date(startTime), "HH:mm:ss a")
     )
   );

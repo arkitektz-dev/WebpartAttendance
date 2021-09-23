@@ -31,6 +31,7 @@ export const WebpartConfiguration = {
   attendanceListTimeoutColumn: "EndDate",
   attendanceListLocationCoordinatesColumn: "Location",
   attendanceListLocationLabelColumn: "From",
+  attendanceListPayCodeColumn: "PayCode",
 
   noLocationLabel: "no location service enabled",
   noOfficeLabel: "no office assigned to this user.",

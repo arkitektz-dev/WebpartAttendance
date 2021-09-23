@@ -68,6 +68,7 @@ define([], function () {
         TimeoutColumnFieldLabel: "Time-out",
         LocationLabelColumnFieldLabel: "From",
         LocationCoordinatesColumnFieldLabel: "Location",
+        PayCodeColumnFieldLabel: "Pay Code",
       },
     },
   };
