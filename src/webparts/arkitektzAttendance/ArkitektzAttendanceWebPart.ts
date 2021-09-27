@@ -45,16 +45,12 @@ import {
   LogFileInfo,
 } from "./../../config/config";
 
-import { sp } from "@pnp/sp";
-import "@pnp/sp/webs";
-import "@pnp/sp/regional-settings/web";
-import { Web } from "@pnp/sp/webs";
-
 const layout1Svg: string = require("./components/assets/layout1.svg");
 const layout2Svg: string = require("./components/assets/layout2.svg");
 
 export interface IArkitektzAttendanceWebPartProps {
   webpartConfiguration: IWebpartConfiguration;
+  error: string;
 
   //settings
   showDescription: boolean;
@@ -99,47 +95,52 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
   private _webpartConfiguration: IWebpartConfiguration = null;
 
   protected async onInit(): Promise<void> {
-    this._themeProvider = this.context.serviceScope.consume(
-      ThemeProvider.serviceKey
-    );
-    this._themeVariant = this._themeProvider.tryGetTheme();
-    this._themeProvider.themeChangedEvent.add(
-      this,
-      this._handleThemeChangedEvent
-    );
-
     const fileService = new FileService(this.context);
 
-    const isFolderExist = await fileService.checkFolderExist(
-      ConfigurationFileInfo.uploadPath
-    );
+    const siteAssetsLibraryEnsured =
+      await fileService.ensureSiteAssetsLibraryExist();
 
-    if (!isFolderExist) {
-      await fileService.addFolder(ConfigurationFileInfo.folderName);
-    }
+    if (siteAssetsLibraryEnsured) {
+      const isFolderExist = await fileService.checkFolderExist(
+        ConfigurationFileInfo.uploadPath
+      );
 
-    const isFileExist = await fileService.checkFileExist(
-      ConfigurationFileInfo.fullPath
-    );
+      if (!isFolderExist) {
+        const folderAdded = await fileService.addFolder(
+          ConfigurationFileInfo.folderName
+        );
+        if (folderAdded) {
+          const isFileExist = await fileService.checkFileExist(
+            ConfigurationFileInfo.fullPath
+          );
+          if (!isFileExist) {
+            const fileObj = new File(
+              [JSON.stringify(WebpartConfiguration)],
+              ConfigurationFileInfo.nameWithExt,
+              {
+                type: "application/json",
+              }
+            );
 
-    if (!isFileExist) {
-      const fileObj = new File(
-        [JSON.stringify(WebpartConfiguration)],
-        ConfigurationFileInfo.nameWithExt,
-        {
-          type: "application/json",
+            const fileAdded = await fileService.addFile(
+              fileObj,
+              ConfigurationFileInfo.uploadPath
+            );
+
+            if (fileAdded) {
+              this.properties.webpartConfiguration = WebpartConfiguration;
+              this._webpartConfiguration = WebpartConfiguration;
+            }
+          } else {
+            const file: IWebpartConfiguration = await fileService.readFile(
+              ConfigurationFileInfo.fullPath
+            );
+            if (file) {
+              this._webpartConfiguration = file;
+            }
+          }
         }
-      );
-
-      await fileService.addFile(fileObj, ConfigurationFileInfo.uploadPath);
-
-      this.properties.webpartConfiguration = WebpartConfiguration;
-      this._webpartConfiguration = WebpartConfiguration;
-    } else {
-      const file: IWebpartConfiguration = await fileService.readFile(
-        ConfigurationFileInfo.fullPath
-      );
-      this._webpartConfiguration = file;
+      }
     }
 
     const isLogFileExist = await fileService.checkFileExist(
@@ -153,6 +154,15 @@ export default class ArkitektzAttendanceWebPart extends BaseClientSideWebPart<IA
 
       await fileService.addFile(fileObj, ConfigurationFileInfo.uploadPath);
     }
+
+    this._themeProvider = this.context.serviceScope.consume(
+      ThemeProvider.serviceKey
+    );
+    this._themeVariant = this._themeProvider.tryGetTheme();
+    this._themeProvider.themeChangedEvent.add(
+      this,
+      this._handleThemeChangedEvent
+    );
 
     this.initializeProperties();
 

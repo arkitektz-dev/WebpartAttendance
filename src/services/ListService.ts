@@ -24,34 +24,55 @@ export class ListService {
     const filterstring = `Hidden eq false`;
     let lists: IList[] = [];
 
-    const response = await web.lists
-      .filter(filterstring)
-      .get()
-      .then((res) => {
-        // console.log(res);
-        lists = res.map((item) => {
-          const list: IList = {} as IList;
+    try {
+      const response = await web.lists.filter(filterstring).get();
+      lists = response.map((item) => {
+        const list: IList = {} as IList;
 
-          list.id = item.Id;
-          list.title = item.Title;
+        list.id = item.Id;
+        list.title = item.Title;
 
-          return list;
-        });
-
-        return lists;
-      })
-      .catch((error) => {
-        console.log(
-          "'Method Name': List Service->getLists",
-          "\n'Message':",
-          error.message,
-          "\n'Error':",
-          error
-        );
-        return lists;
+        return list;
       });
+    } catch (error) {
+      console.log(
+        "'Method Name': List Service --> getLists",
+        "\n'Message':",
+        error.message,
+        "\n'Error':",
+        error
+      );
+    }
+    
+    return lists;
+    // const response = await web.lists
+    //   .filter(filterstring)
+    //   .get()
+    //   .then((res) => {
+    //     // console.log(res);
+    //     lists = res.map((item) => {
+    //       const list: IList = {} as IList;
 
-    return response;
+    //       list.id = item.Id;
+    //       list.title = item.Title;
+
+    //       return list;
+    //     });
+
+    //     return lists;
+    //   })
+    //   .catch((error) => {
+    //     console.log(
+    //       "'Method Name': List Service --> getLists",
+    //       "\n'Message':",
+    //       error.message,
+    //       "\n'Error':",
+    //       error
+    //     );
+    //     return lists;
+    //   });
+
+    // return response;
   }
 
   public async getListColumns(
@@ -102,10 +123,15 @@ export class ListService {
       attendanceListTimeoutColumn,
       attendanceListLocationLabelColumn,
       attendanceListLocationCoordinatesColumn,
+      attendanceListPayCodeColumn,
     } = webpartConfiguration;
     try {
       const web = Web(attendanceListSiteURL);
-      let filterstring = `${attendanceListUserColumn}/EMail eq '${this._currentUser}' and ${attendanceListTimeoutColumn} eq null`;
+      let filterstring = `${attendanceListUserColumn}/EMail eq '${
+        this._currentUser
+      }' and ${attendanceListTimeoutColumn} eq null and ${
+        attendanceListPayCodeColumn + "Id"
+      } eq '3'`;
       let toSelect: string[] = [
         "Id",
         attendanceListTimeinColumn,
@@ -115,8 +141,13 @@ export class ListService {
 
         `${attendanceListUserColumn}/Title`,
         `${attendanceListUserColumn}/EMail`,
+
+        // `${attendanceListPayCodeColumn}/Id`,
       ];
-      let toExpand: string[] = [attendanceListUserColumn];
+      let toExpand: string[] = [
+        attendanceListUserColumn,
+        // attendanceListPayCodeColumn,
+      ];
 
       const response: IResult = await web.lists
         .getByTitle(attendanceListName)
@@ -125,7 +156,7 @@ export class ListService {
         .filter(filterstring)
         .get()
         .then((res) => {
-          // console.log(res);
+          console.log(res);
           if (res.length === 0)
             return {
               entity: null,
@@ -180,9 +211,21 @@ export class ListService {
       const web = Web(usersListSiteURL);
       let filterstring = `${usersListTitleColumn}/EMail eq '${this._currentUser}'`;
       let toSelect: string[] = [`${usersListTitleColumn}/EMail`];
+
+      let officeLookupInfo = null;
       if (isOfficeLookupField) {
+        const officeLookUpArray =
+          usersListOfficeLocationCoordinatesColumn.split("_x003a_");
+
+        officeLookupInfo = {
+          listName: officeLookUpArray[0],
+          columnName: officeLookUpArray[1],
+        };
+      }
+
+      if (officeLookupInfo) {
         toSelect.push(
-          `${usersListOfficeLocationCoordinatesColumn.replace("_x003a_", "/")}`
+          `${officeLookupInfo.listName}/${officeLookupInfo.columnName}`
         );
       } else {
         toSelect.push(usersListOfficeLocationCoordinatesColumn);
@@ -190,9 +233,7 @@ export class ListService {
 
       let toExpand: string[] = [usersListTitleColumn];
       if (isOfficeLookupField) {
-        toExpand.push(
-          usersListOfficeLocationCoordinatesColumn.split("_x003a_")[0]
-        );
+        toExpand.push(officeLookupInfo.listName);
       }
 
       const response = await web.lists
@@ -213,10 +254,14 @@ export class ListService {
             email: res[0][usersListTitleColumn]["EMail"],
           };
 
-          if (res[0][usersListOfficeLocationCoordinatesColumn]) {
-            const officeLocationCoordinates = isOfficeLookupField
-              ? res[0][usersListOfficeLocationCoordinatesColumn][
-                  "Location"
+          if (
+            officeLookupInfo
+              ? res[0][officeLookupInfo.listName][officeLookupInfo.columnName]
+              : res[0][usersListOfficeLocationCoordinatesColumn]
+          ) {
+            const officeLocationCoordinates = officeLookupInfo
+              ? res[0][officeLookupInfo.listName][
+                  officeLookupInfo.columnName
                 ].split(",")
               : res[0][usersListOfficeLocationCoordinatesColumn].split(",");
 

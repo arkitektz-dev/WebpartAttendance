@@ -1,5 +1,6 @@
 import { WebPartContext } from "@microsoft/sp-webpart-base";
 import { IWeb, Web } from "@pnp/sp/webs";
+import { formatLogMessage } from "../utils/logsUtils";
 import "@pnp/sp/webs";
 import "@pnp/sp/files";
 import "@pnp/sp/folders";
@@ -15,155 +16,155 @@ class FileService {
     this.serverRelativeUrl = _context.pageContext.site.serverRelativeUrl;
   }
 
-  public async checkFolderExist(folderPath: string): Promise<boolean> {
-    const path =
-      this.serverRelativeUrl.length === 1
-        ? folderPath
-        : `${this.serverRelativeUrl}${folderPath}`;
+  public async ensureSiteAssetsLibraryExist() {
+    try {
+      const response = await this._web.lists.ensureSiteAssetsLibrary();
+      const siteAssetsLibrary = await response.select("Title")();
+      // console.log("ensureSiteAssetsLibraryExist", response);
+      // console.log("ensureSiteAssetsLibraryExist siteAssetsLibrary", siteAssetsLibrary);
 
-    const response = await this._web
-      .getFolderByServerRelativeUrl(path)
-      .select("Exists")
-      .get()
-      .then((res) => {
-        // console.log("checkFolderExist", res);
-        return res.Exists;
-      })
-      .catch((error) => {
-        console.log(
-          "'Method Name': List Service --> checkFolderExist",
-          "\n'Message':",
-          error.message,
-          "\n'Error':",
-          error
-        );
-        return false;
-      });
-
-    // console.log(response);
-
-    return response;
+      return true;
+    } catch (error) {
+      console.log(
+        "'Method Name': File Service --> ensureSiteAssetsLibraryExist",
+        "\n'Message':",
+        error.message,
+        "\n'Error':",
+        error
+      );
+      return false;
+    }
   }
 
-  public async addFolder(folderName: string): Promise<any> {
-    const response = await this._web.lists
-      .getByTitle("Site Assets")
-      .rootFolder.folders.add(folderName)
-      .then((res) => {
-        // console.log(res);
-        return true;
-      })
-      .catch((error) => {
-        console.log(
-          "'Method Name': List Service --> addFolder",
-          "\n'Message':",
-          error.message,
-          "\n'Error':",
-          error
-        );
-        return false;
-      });
+  public async checkFolderExist(folderPath: string): Promise<boolean> {
+    try {
+      const path =
+        this.serverRelativeUrl.length === 1
+          ? folderPath
+          : `${this.serverRelativeUrl}${folderPath}`;
 
-    // console.log(response);
+      const response = await this._web
+        .getFolderByServerRelativeUrl(path)
+        .select("Exists")
+        .get();
+      // console.log("checkFolderExist", response);
 
-    return response;
+      return response.Exists;
+    } catch (error) {
+      console.log(
+        "'Method Name': File Service --> checkFolderExist",
+        "\n'Message':",
+        error.message,
+        "\n'Error':",
+        error
+      );
+      return false;
+    }
+  }
+
+  public async addFolder(folderName: string): Promise<boolean> {
+    try {
+      const response = await this._web.lists
+        .getByTitle("Site Assets")
+        .rootFolder.folders.add(folderName);
+      // console.log("addFolder", response);
+
+      return true;
+    } catch (error) {
+      console.log(
+        "'Method Name': File Service --> addFolder",
+        "\n'Message':",
+        error.message,
+        "\n'Error':",
+        error
+      );
+      return false;
+    }
   }
 
   public async readFile(filePath: string): Promise<any> {
-    const path =
-      this.serverRelativeUrl.length === 1
-        ? filePath
-        : `${this.serverRelativeUrl}${filePath}`;
+    try {
+      const path =
+        this.serverRelativeUrl.length === 1
+          ? filePath
+          : `${this.serverRelativeUrl}${filePath}`;
 
-    const response = await this._web
-      .getFileByServerRelativeUrl(path)
-      .getJSON()
-      .then((res) => {
-        // console.log(res);
-        return res;
-      })
-      .catch((error) => {
-        console.log(
-          "'Method Name': List Service --> readFile",
-          "\n'Message':",
-          error.message,
-          "\n'Error':",
-          error
-        );
-        return false;
-      });
+      const response = await this._web
+        .getFileByServerRelativeUrl(path)
+        .getJSON();
+      // console.log("readFile", response);
 
-    // console.log(response);
-
-    return response;
+      return response;
+    } catch (error) {
+      console.log(
+        "'Method Name': File Service --> readFile",
+        "\n'Message':",
+        error.message,
+        "\n'Error':",
+        error
+      );
+      return false;
+    }
   }
 
-  public async addFile(file: File, uploadPath: string): Promise<any> {
-    const path =
-      this.serverRelativeUrl.length === 1
-        ? uploadPath
-        : `${this.serverRelativeUrl}${uploadPath}`;
+  public async addFile(file: File, uploadPath: string): Promise<boolean> {
+    try {
+      const path =
+        this.serverRelativeUrl.length === 1
+          ? uploadPath
+          : `${this.serverRelativeUrl}${uploadPath}`;
 
-    const response = await this._web
-      .getFolderByServerRelativeUrl(path)
-      .files.add(file.name, file, false)
-      .then((res) => {
-        // console.log(res);
-        return true;
-      })
-      .catch((error) => {
-        console.log(
-          "'Method Name': List Service --> addFile",
-          "\n'Message':",
-          error.message,
-          "\n'Error':",
-          error
-        );
-        return false;
-      });
+      const response = await this._web
+        .getFolderByServerRelativeUrl(path)
+        .files.add(file.name, file, false);
+      // console.log("addFile", response);
 
-    // console.log(response);
-
-    return response;
+      return true;
+    } catch (error) {
+      console.log(
+        "'Method Name': File Service --> addFile",
+        "\n'Message':",
+        error.message,
+        "\n'Error':",
+        error
+      );
+      return false;
+    }
   }
 
   public async checkFileExist(filePath: string): Promise<boolean> {
-    const path =
-      this.serverRelativeUrl.length === 1
-        ? filePath
-        : `${this.serverRelativeUrl}${filePath}`;
+    try {
+      const path =
+        this.serverRelativeUrl.length === 1
+          ? filePath
+          : `${this.serverRelativeUrl}${filePath}`;
 
-    const response = await this._web
-      .getFileByServerRelativeUrl(path)
-      .select("Exists")
-      .get()
-      .then((res) => {
-        // console.log("checkFileExist", res);
-        return res.Exists;
-      })
-      .catch((error) => {
-        console.log(
-          "'Method Name': List Service --> checkFileExist",
-          "\n'Message':",
-          error.message,
-          "\n'Error':",
-          error
-        );
-        return false;
-      });
+      const response = await this._web
+        .getFileByServerRelativeUrl(path)
+        .select("Exists")
+        .get();
+      // console.log("checkFileExist", response);
 
-    // console.log(response);
-
-    return response;
+      return response.Exists;
+    } catch (error) {
+      console.log(
+        "'Method Name': File Service --> checkFileExist",
+        "\n'Message':",
+        error.message,
+        "\n'Error':",
+        error
+      );
+      return false;
+    }
   }
 
   public async updateLogFileContent(
     error: Error,
-    filePath: string
-  ): Promise<any> {
+    filePath: string,
+    type: string = "error"
+  ): Promise<boolean> {
     try {
-      const currentDate = new Date().toLocaleString();
-      const logEntry = `Time: ${currentDate}\n-----------------------------\nUser: ${this._currentUser}\nType: ${error.name}\nMessage: ${error.message}\nStack Trace: ${error.stack}\n`;
+      const logEntry = formatLogMessage(error, type, this._currentUser);
 
       const oldContent = await this._web
         .getFileByServerRelativeUrl(filePath)
@@ -173,9 +174,19 @@ class FileService {
         .getFileByServerRelativeUrl(filePath)
         .setContent(`${oldContent}\n${logEntry}`);
 
-      return response;
+      // console.log("updateLogFileContent", response);
+
+      return true;
     } catch (error) {
-      return null;
+      console.log(
+        "'Method Name': File Service --> updateLogFileContent",
+        "\n'Message':",
+        error.message,
+        "\n'Error':",
+        error
+      );
+
+      return false;
     }
   }
 }
